@@ -415,38 +415,10 @@ public class NotificationFragment extends ListFragment
             else
             	holder.container.setVisibility(View.VISIBLE);
             
-            
-       
-//            String friendly = null;
-//            if (n.getType().equals("reply"))
-//            	friendly = " replied to your post";
-//            else if (n.getType().equals("keyword"))
-//            	friendly = " mentioned " + n.getKeyword();
-//            else if (n.getType().equals("vanity"))
-//            	friendly = " mentioned your name";
             holder.userName.setText(n.getAuthor());
             holder.content.setMaxLines(_previewLines);
             holder.content.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
-            // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));
             holder.content.setText(PostFormatter.formatContent(n.getAuthor(), n.getBody(), null, false, true));
-
-            /*
-            final double threadAgeInHours = TimeDisplay.threadAgeInHours(n.getTime());
-            // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-        	if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(n.getTime())))
-        		holder.posted.setText(TimeDisplay.convTime(n.getTime(), "MMM dd, yyyy h:mma zzz"));
-        	else
-        	{
-	            if ((!_showHoursSince) || (threadAgeInHours > 24f))
-	            {
-	            	if (threadAgeInHours > 96f)
-	            		holder.posted.setText(TimeDisplay.convertTimeLong(n.getTime()));
-	            	else
-	            		holder.posted.setText(TimeDisplay.convertTime(n.getTime()));
-	            }
-	            else
-	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
-        	}*/
             holder.posted.setText(TimeDisplay.getNiceTimeSince(n.getTime(), _showHoursSince));
           
             // special highlight for employee and mod names
@@ -463,11 +435,7 @@ public class NotificationFragment extends ListFragment
     			holder.userName.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername));
     		}
             
-            //if (m.getRead())
-            	holder.container.setNew(false);
-           // else
-            //	holder.container.setNew(true);
-            
+          	holder.container.setNew(false);
             return convertView;
         }
         

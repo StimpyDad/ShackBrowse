@@ -100,19 +100,11 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.MediaEntity;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.tweetui.CompactTweetView;
-import com.twitter.sdk.android.tweetui.TweetUtils;
 
 import net.swigglesoft.CheckableTableLayout;
 import net.swigglesoft.CustomLinkMovementMethod;
 import net.swigglesoft.ExpandableListItemAdapter;
 import net.swigglesoft.FixedTextView;
-import net.swigglesoft.shackbrowse.twitter.TweetDataFixer;
 import static net.swigglesoft.shackbrowse.ShackApi.POST_EXPIRY_HOURS;
 
 import org.json.JSONException;
@@ -2081,55 +2073,6 @@ public class ThreadViewFragment extends ListFragment
 										.error(R.drawable.ic_action_content_flag))
 								.into(image);
 					}
-					// TWITTER CRAP
-					if ((postClip.type == PostClip.TYPE_TWEET) && (postClip.url != null) && (doEmbedItemsImages)) {
-						final LinearLayout tweetHolder = new LinearLayout(getContext());
-						final String url = postClip.url.getURL().trim();
-
-
-						System.out.println("EMBEDT:" + PopupBrowserFragment.imageUrlFixer(url));
-
-						//Random ncolor = new Random();
-						//image.setBackgroundColor(Color.argb(255, ncolor.nextInt(255), ncolor.nextInt(255), ncolor.nextInt(255)));
-						// holder.postContent.addView(image, 1, new LinearLayout.LayoutParams(width, width));
-
-						holder.postContent.addView(tweetHolder, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-						final long tweetId = PopupBrowserFragment.getTweetId(url);
-						if (postClip.tweetdata == null)
-						{
-							System.out.println("TWEETLOAD FROM SCRATCH: " + tweetId);
-							try {
-								TweetUtils.loadTweet(tweetId, new Callback<Tweet>() {
-									@Override
-									public void success(Result<Tweet> result) {
-										try {
-											postClip.tweetdata = TweetDataFixer.fixTweetMediaData(result);
-											addTweetView(postClip, tweetHolder, url);
-										} catch (Exception e) {
-											System.out.println("EXCEPTION IN loadTweet success(): " + e.getMessage());
-										}
-									}
-									@Override
-									public void failure(TwitterException exception) {
-										System.out.println("Tweet load failure: " + exception.getMessage());
-									}
-								});
-							}
-							catch(Exception e) {
-								System.out.println("EXCEPTION IN loadTweet: " + e.getMessage());
-							}
-						}
-						else
-						{
-							try {
-								addTweetView(postClip, tweetHolder, url);
-							} catch (Exception e) {
-								System.out.println("EXCEPTION IN tweetHolder.addView: " + e.getMessage());
-							}
-						}
-					}
-
 					// YOUTUBE CRAP
 					if ((postClip.type == PostClip.TYPE_YOUTUBE) && (postClip.url != null) && (doEmbedItemsImages)) {
 
@@ -2278,19 +2221,6 @@ public class ThreadViewFragment extends ListFragment
 					}
 				}
 			}
-		}
-
-		private void addTweetView(PostClip postClip, LinearLayout tweetHolder, String url) {
-			CompactTweetView tweetView = new CompactTweetView(getContext(), postClip.tweetdata, R.style.tw__TweetDarkStyle);
-			MediaEntity mediaItem = postClip.tweetdata.extendedEntities.media.size() > 0 ? postClip.tweetdata.extendedEntities.media.get(0) : null;
-			if(mediaItem != null &&
-					mediaItem.type.equalsIgnoreCase("animated_gif")) {
-				tweetView.setTweetMediaClickListener((tweet, media) -> {
-					CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-					customTabsIntent.launchUrl(getContext(), Uri.parse(url));
-				});
-			}
-			tweetHolder.addView(tweetView);
 		}
 
 		protected View createView(int position, View convertView, ViewGroup parent, boolean isExpanded)
@@ -2655,18 +2585,6 @@ public class ThreadViewFragment extends ListFragment
 						}
 						else
 							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_IMAGE));
-					}
-					startClip = text.getSpanEnd(target);
-				}
-				if (PopupBrowserFragment.isTweet(target.getURL().trim())) {
-					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
-						if (removeLinksImages) {
-							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
-							tempTxt.removeSpan(target);
-							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_TWEET));
-						}
-						else
-							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_TWEET));
 					}
 					startClip = text.getSpanEnd(target);
 				}

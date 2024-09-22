@@ -116,7 +116,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubeP
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.ui.PlayerUIController;
-import com.twitter.sdk.android.core.Twitter;
 
 import static net.swigglesoft.shackbrowse.StatsFragment.statInc;
 
@@ -559,8 +558,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// default content setting
 		setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
-
-		Twitter.initialize(this);
 
         ShackMessageCheck SMC = new ShackMessageCheck(this);
         SMC.frugalSMCheck();

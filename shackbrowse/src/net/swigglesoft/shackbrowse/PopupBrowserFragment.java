@@ -399,37 +399,6 @@ public class PopupBrowserFragment extends Fragment {
 			return _href;
 		}
 	}
-	public static boolean isTweet (String _href)
-	{
-		if (getTweetId(_href) != null)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	public static Long getTweetId (String _href)
-	{
-		if (
-				_href.contains("twitter.com/")
-				)
-		{
-			String href[] = _href.split("/");
-			String idplus[] = href[href.length -1].split("\\?");
-			Long tid = null;
-			try {
-				tid = Long.parseLong(idplus[0]);
-			}
-			catch (Exception e) { e.printStackTrace(); }
-			return tid;
-		}
-		else
-		{
-			return null;
-		}
-	}
 
 	public static boolean isYoutube (String _href)
 	{

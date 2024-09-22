@@ -2533,11 +2533,9 @@ public class ThreadViewFragment extends ListFragment
 		{
 			public static final int TYPE_YOUTUBE = 2;
 			public static final int TYPE_IMAGE = 0;
-			public static final int TYPE_TWEET = 1;
 			public static final int TYPE_MP4 = 3;
 			public Spannable text = null;
 			public CustomURLSpan url = null;
-			public Tweet tweetdata = null;
 			public int type = 0;
 			PostClip (Spannable ptext) { text = ptext; }
 			PostClip (CustomURLSpan pimage, int ptype) {

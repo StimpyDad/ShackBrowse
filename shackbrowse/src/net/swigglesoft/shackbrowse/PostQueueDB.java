@@ -3,6 +3,7 @@ package net.swigglesoft.shackbrowse;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -121,7 +122,18 @@ public class PostQueueDB {
 		return ps;
 	}
 	private PostQueueObj cursorToPost(Cursor cursor) {
-		PostQueueObj p = new PostQueueObj(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PID)),cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PTEXT)),cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PREPLYTO)),cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PFINALID)), cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PISMESSAGE)), cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PISNEWS)), cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PSUBJECT)), cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PRECIPIENT)), cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PFINALIZEDTIME)));
+		@SuppressLint("Range")
+		PostQueueObj p = new PostQueueObj(
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PID)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PTEXT)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PREPLYTO)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PFINALID)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PISMESSAGE)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PISNEWS)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PSUBJECT)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PRECIPIENT)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PFINALIZEDTIME))
+		);
 		return p;
 	}
 	

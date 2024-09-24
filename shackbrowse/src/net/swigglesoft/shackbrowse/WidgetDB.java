@@ -4,6 +4,7 @@ package net.swigglesoft.shackbrowse;
  * Created by brad on 6/21/2016.
  */
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -63,8 +64,19 @@ public class WidgetDB {
 		return tl;
 	}
 
-	private Thread cursorToThread(Cursor cursor) {
-		Thread t = new Thread(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WTID)),cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WPOSTER)),cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WTEXT)),cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WPOSTEDTIME)), cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WREPLYCOUNT)), cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WMODERATION)), (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WREPLIED)) != 0), false);
+	@SuppressLint("Range")
+    private Thread cursorToThread(Cursor cursor) {
+		Thread t = new Thread(
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WTID)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WPOSTER)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WTEXT)),
+				cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WPOSTEDTIME)),
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WREPLYCOUNT)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WMODERATION)),
+				(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WREPLIED)) != 0),
+				false
+		);
+
 		t.setLolObj(new LolObj(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WLOLOBJ))));
 		return t;
 	}

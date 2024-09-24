@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -108,7 +109,8 @@ public class PicUploader extends AppCompatActivity {
         }
 	}
 
-	@Override
+	@SuppressLint("MissingSuperCall")
+    @Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 		switch (requestCode) {
 			case MY_PERMISSIONS_REQUEST_READ_EXT: {

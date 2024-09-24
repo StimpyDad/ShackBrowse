@@ -39,17 +39,24 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
         _itemList = new ArrayList<T>();
         setCurrentlyLoading(false);
         setLastCallSuccessful(true);
-        if (_verbose) System.out.println("LOADINGADAPTER: instantiated. uuid:" + _uniqueId);
+        if (_verbose){
+            System.out.println("LOADINGADAPTER: instantiated. uuid:" + _uniqueId);
+        }
     }
     
     @SuppressLint("NewApi")
 	public void triggerLoadMore()
     {
-    	if (_uniqueId == null)
-    		if (_verbose) System.out.println("LOADINGADAPTER: null uuid. should never happen");
+    	if (_uniqueId == null) {
+            if (_verbose){
+                System.out.println("LOADINGADAPTER: null uuid. should never happen");
+            }
+        }
     	if ((mTask == null) || (mTask.getStatus() == AsyncTask.Status.FINISHED) || (mTask.isCancelled()))
     	{
-    		if (_verbose) System.out.println("LOADINGADAPTER: triggered load. uuid:" + _uniqueId);
+    		if (_verbose){
+                System.out.println("LOADINGADAPTER: triggered load. uuid:" + _uniqueId);
+            }
     		mTask = new LoadAndAppendTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, _uniqueId);
     	}
     }
@@ -80,10 +87,12 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
         super.clear();
         _itemList.clear();
         setLastCallSuccessful(true);
-        if (_verbose && isAsyncTaskLoading())
-        	System.out.println("LOADINGADAPTER: Canceling "+_uniqueId);
-        if (isAsyncTaskLoading()) 
-        	mTask.cancel(true);
+        if (_verbose && isAsyncTaskLoading()) {
+            System.out.println("LOADINGADAPTER: Canceling " + _uniqueId);
+        }
+        if (isAsyncTaskLoading()) {
+            mTask.cancel(true);
+        }
         _uniqueId = UUID.randomUUID();
     }
     
@@ -97,7 +106,9 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
     }
     protected void setCurrentlyLoading(boolean set)
     {
-    	if (_verbose) System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+    	if (_verbose){
+            System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+        }
         _isLoading = set;
     }
     
@@ -131,15 +142,20 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
 	                _exception = e;
 	            }
         	}
-        	else
-        		if (_verbose) System.out.println("LOADINGADAPTER: already loading."  + _uniqueId + _isLoading + isCurrentlyLoading());
+        	else {
+                if (_verbose) {
+                    System.out.println("LOADINGADAPTER: already loading." + _uniqueId + _isLoading + isCurrentlyLoading());
+                }
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(ArrayList<T> result)
         {
-        	if (_verbose) System.out.println("LOADINGADAPTER: onpostexecute "  + _uniqueId + _isLoading + isCurrentlyLoading());
+        	if (_verbose){
+                System.out.println("LOADINGADAPTER: onpostexecute "  + _uniqueId + _isLoading + isCurrentlyLoading());
+            }
             
         	// user did something to invalidate the previous request
             if (!_loadingId.equals(_uniqueId))
@@ -159,11 +175,16 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
             }
             else if (result != null)
             {
-            	if (_verbose) System.out.println("LOADINGADAPTER: FINISHED loading " + _loadingId + " results: " + result.size());
+            	if (_verbose){
+                    System.out.println("LOADINGADAPTER: FINISHED loading " + _loadingId + " results: " + result.size());
+                }
+
             	if (_clearBeforeAddOnPostExecute)
             	{
             		clear();
-            		if (_verbose) System.out.println("LOADINGADAPTER: cleared before onpostexecute!");
+            		if (_verbose){
+                        System.out.println("LOADINGADAPTER: cleared before onpostexecute!");
+                    }
             		setClearBeforeAddOnPostExecute(false);
             	}
             	if (result.size() > 0)
@@ -187,5 +208,4 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
             }
         }
     }
-    
 }

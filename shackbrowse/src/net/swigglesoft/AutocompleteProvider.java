@@ -75,8 +75,7 @@ public class AutocompleteProvider
 				jArray = new JSONArray(mListdata);
 				SharedPreferences.Editor edit = mPrefs.edit();
 				edit.putString(mId + "SuggestionList", jArray.toString());
-				edit.commit();
-
+				edit.apply();
 			}
 			catch(Exception e)
 			{

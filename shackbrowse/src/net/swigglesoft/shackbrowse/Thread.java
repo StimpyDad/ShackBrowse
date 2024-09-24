@@ -45,8 +45,8 @@ public class Thread implements Parcelable {
 	        jconst.put("category", moderation);
 	        // serverside replycount is off by one
 	        jconst.put("reply_count", replyCount);
-	        jconst.put("replied", replied);
-			jconst.put("date", TimeDisplay.convTime(postedTime, "MMM dd, yyyy h:mma zzz"));
+            jconst.put("replied", replied);
+            jconst.put("date", TimeDisplay.convTime(postedTime, "MMM dd, yyyy h:mma zzz"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

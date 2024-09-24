@@ -531,8 +531,10 @@ public class ComposePostView extends AppCompatActivity {
 	public void setupButtonBindings(Bundle extras)
 	{
 		mAnonMode = _prefs.getBoolean("donkeyanonoption", false);
-		if (extras == null)
+
+		if (extras == null) {
 			extras = new Bundle();
+		}
         
         if ((_replyToPostId == 0) && (!_messageMode))
         {
@@ -543,6 +545,7 @@ public class ComposePostView extends AppCompatActivity {
         {
         	_messageSubject = extras.getString("messageSubject");
         }
+
         if (extras.containsKey("parentAuthor"))
         {
         	final String author = extras.getString("parentAuthor");
@@ -1618,8 +1621,9 @@ public class ComposePostView extends AppCompatActivity {
         protected void onPostExecute(PostReference res)
         {
         	// delete any drafts
-        	if (!_messageMode)
-        		_drafts.deleteDraftById(_replyToPostId);
+        	if (!_messageMode) {
+				_drafts.deleteDraftById(_replyToPostId);
+			}
         	
         	/*
             _progressDialog.dismiss();
@@ -1643,13 +1647,14 @@ public class ComposePostView extends AppCompatActivity {
         	        builder.setNegativeButton("OK", null);
         	        builder.create().show();
             	}
-            	else
-            		ErrorDialog.display(ComposePostView.this, "Error", "Error posting:\n" + _exception.getMessage());
+            	else {
+					ErrorDialog.display(ComposePostView.this, "Error", "Error posting:\n" + _exception.getMessage());
+				}
             }
-            else
-                postSuccessful(res);
+            else {
+				postSuccessful(res);
+			}
         }
-        
 	}
 
 	public static String getMimeTypeOfUri(Context context, Uri uri) {

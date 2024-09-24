@@ -1144,8 +1144,9 @@ public class ThreadListFragment extends ListFragment
 	    public int getCount() {
 	    	synchronized (mLock)
         	{
-		    	if ((!_filtering) || (_filteredItemList == null))
-		    		return _itemList.size();
+		    	if ((!_filtering) || (_filteredItemList == null)) {
+					return _itemList.size();
+				}
 		        return _filteredItemList.size();
         	}
 	    }
@@ -1153,15 +1154,17 @@ public class ThreadListFragment extends ListFragment
 	    public Thread getItem(int position) {
 	    	synchronized (mLock)
         	{
-		    	if ((!_filtering) || (_filteredItemList == null))
-		    		return _itemList.get(position);
+		    	if ((!_filtering) || (_filteredItemList == null)) {
+					return _itemList.get(position);
+				}
 		        return _filteredItemList.get(position);
         	}
 	    }
 	    @Override
 	    public int getPosition(Thread item) {
-	    	if ((!_filtering) || (_filteredItemList == null))
-	    		return _itemList.indexOf(item);
+	    	if ((!_filtering) || (_filteredItemList == null)) {
+				return _itemList.indexOf(item);
+			}
 	        return _filteredItemList.indexOf(item);
 	    }
 	    @Override
@@ -1208,9 +1211,9 @@ public class ThreadListFragment extends ListFragment
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {       
-            if (convertView == null)
-                convertView = _inflater.inflate(R.layout.row, null);
-            
+            if (convertView == null) {
+				convertView = _inflater.inflate(R.layout.row, null);
+			}
             return createView(position, convertView, parent);
         }
         
@@ -1256,13 +1259,12 @@ public class ThreadListFragment extends ListFragment
 				        {
 					        if (_viewAvailable)
 					        {
-								if (set)
-									((MainActivity)getActivity()).startProgressBar();
-								else
-									((MainActivity)getActivity()).stopProgressBar();
-
-						        // if (ptrLayout != null)
-							    //    ptrLayout.setRefreshing(set);
+								if (set) {
+									((MainActivity) getActivity()).startProgressBar();
+								}
+								else {
+									((MainActivity) getActivity()).stopProgressBar();
+								}
 					        }
 				        }
 			        });

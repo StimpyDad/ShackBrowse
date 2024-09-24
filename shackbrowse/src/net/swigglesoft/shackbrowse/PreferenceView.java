@@ -65,14 +65,13 @@ public class PreferenceView extends PreferenceFragment
         customPref.setTitle("Shack Browse V. " + versionName);
         final Context cont = getActivity();
         customPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				ChangeLog cl = new ChangeLog(cont);
-		        cl.getFullLogDialog().show();
+				cl.getFullLogDialog().show();
 				return false;
-			}}
-        );
+			}
+		});
 
 	    Preference imgurLogin = (Preference) findPreference("imgurLogin");
 	    imgurLogin.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -250,11 +249,11 @@ public class PreferenceView extends PreferenceFragment
             	Long current = TimeDisplay.now();
             	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.WINCHATTYV2_API, true));
             	float winchatty = (TimeDisplay.now() - current);
-            	if (isCancelled()) 
-            	    return null;
-            	
-                return String.valueOf(winchatty);
-                
+            	if (isCancelled()) {
+					return null;
+				}
+
+				return String.valueOf(winchatty);
             }
             catch (Exception e)
             {
@@ -272,9 +271,9 @@ public class PreferenceView extends PreferenceFragment
         		handler.postDelayed(new Runnable() {
         		    public void run() {
         		    	_progressDialog.dismiss();
-        		    	
-        		    	if (result == null)
+        		    	if (result == null){
         		    		return;
+						}
         		    	
         		    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         		    	builder.setTitle("API Average Time for getPosts");
@@ -285,8 +284,8 @@ public class PreferenceView extends PreferenceFragment
         		    	AlertDialog alert = builder.create();
         		        alert.setCanceledOnTouchOutside(false);
         		        alert.show();
-        		        
-        		    }}, 500);  // 700 milliseconds
+       		        }
+			   }, 500);  // 700 milliseconds
         	}
         	catch (Exception e)
         	{

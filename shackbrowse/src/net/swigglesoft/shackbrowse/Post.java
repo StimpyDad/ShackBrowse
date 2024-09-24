@@ -185,19 +185,25 @@ public class Post implements Comparable<Post> {
         {
 	        char[] zeroes1 = new char[(level -1)];
 	        Arrays.fill(zeroes1, '0');
-	        if (_seen)
-	        	_depthString = new String(zeroes1) + "L";
-	        else
+	        if (_seen) {
+                _depthString = new String(zeroes1) + "L";
+            }
+	        else{
 	        	_depthString = new String(zeroes1) + "[";
+            }
         }
         else if (level == 1)
         {
-        	if (_seen)
+        	if (_seen){
         		_depthString = "L";
-        	else
+            }
+        	else{
         		_depthString = "[";
+            }
         }
-        else _depthString = "";
+        else {
+            _depthString = "";
+        }
 
         setDepthString(_depthString);
         setDepthStringFormatted(_depthString);

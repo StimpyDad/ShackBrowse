@@ -118,7 +118,9 @@ public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdap
     }
     protected void setCurrentlyLoading(boolean set)
     {
-    	if (_verbose) System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+    	if (_verbose){
+            System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+        }
         _isLoading = set;
     }
     

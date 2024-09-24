@@ -485,6 +485,10 @@ class TagConverter implements ContentHandler
 				                               Integer.TYPE,
 				                               Float.TYPE);
 				method.invoke(tp, mColor, 1.0f);
+
+                final Method methodThick = TextPaint.class.getMethod("setUnderlineThickness",
+                                                Float.TYPE);
+                methodThick.invoke(tp, 2.0f);
 			} catch (final Exception e) {
 				tp.setUnderlineText(true);
 			}

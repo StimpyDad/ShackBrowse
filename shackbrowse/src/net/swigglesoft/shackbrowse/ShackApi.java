@@ -394,20 +394,28 @@ public class ShackApi
         if (activity != null)
         {
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-	        if (prefs.getBoolean("showInformative", true))
+
+	        if (prefs.getBoolean("showInformative", true)){
                 visible_categories.add("informative");
-            if (prefs.getBoolean("showTangent", true))
+            }
+            if (prefs.getBoolean("showTangent", true)) {
                 visible_categories.add("offtopic");
-            if (prefs.getBoolean("showStupid", true))
+            }
+            if (prefs.getBoolean("showStupid", true)) {
                 visible_categories.add("stupid");
-            if (prefs.getBoolean("showPolitical", false))
+            }
+            if (prefs.getBoolean("showPolitical", false)) {
                 visible_categories.add("political");
-            if (prefs.getBoolean("showOntopic", true))
+            }
+            if (prefs.getBoolean("showOntopic", true)) {
                 visible_categories.add("ontopic");
-            if (prefs.getBoolean("showNWS", false))
+            }
+            if (prefs.getBoolean("showNWS", false)) {
                 visible_categories.add("nws");
-            if (prefs.getBoolean("showCortex", true))
+            }
+            if (prefs.getBoolean("showCortex", true)) {
                 visible_categories.add("cortex");
+            }
         }
         else
         {
@@ -427,17 +435,16 @@ public class ShackApi
         for (int i = 0; i < comments.length(); i++)
         {
             JSONObject comment = comments.getJSONObject(i);
-
             String category = comment.getString("category");
-            
 
             // winchatty v2 renames "offtopic" to "tangent" for some reason
-            if (category.equalsIgnoreCase("tangent"))
-            	category = "offtopic";
+            if (category.equalsIgnoreCase("tangent")) {
+                category = "offtopic";
+            }
             
             int id = comment.getInt("id");
             
-             if  ((filterNone || visible_categories.contains(category)) && (!collapsed.contains(id)))
+            if ((filterNone || visible_categories.contains(category)) && (!collapsed.contains(id)))
             {
 	            //    final boolean[] checkedItems = { _showTangent,_showInformative,_showNWS,_showStupid,_showPolitical};
 	            String userName = comment.getString("author");
@@ -583,8 +590,9 @@ public class ShackApi
             		// last checked it at *seendb* time
             		epochSecs = ((MainActivity)context)._seen.getTable().get(rootPostId);
             	}
-            	else
-            		epochSecs = (int) (TimeDisplay.now() / 1000);
+            	else {
+                    epochSecs = (int) (TimeDisplay.now() / 1000);
+                }
             }
             
             // winchatty stuff
@@ -611,8 +619,9 @@ public class ShackApi
 
                     boolean seen = true;
                     // check if post is newer than last seen time
-                    if ((int)(dateTime / 1000) > epochSecs)
+                    if ((int)(dateTime / 1000) > epochSecs) {
                         seen = false;
+                    }
 
                     Post post = new Post(postId, userName, body, dateTime, depth, category, false, seen, false);
 
@@ -940,7 +949,9 @@ public class ShackApi
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             _getLols = (prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
         }
-        else return new HashMap<String, HashMap<String,LolObj>>();
+        else{
+            return new HashMap<String, HashMap<String,LolObj>>();
+        }
         
         if (!_getLols)
         {
@@ -1093,9 +1104,7 @@ public class ShackApi
 	        {
 	        	JSONObject thisThread = json.getJSONObject(threads.getString(i));
 	        	JSONArray posts = thisThread.names();
-	        	
-	        	
-	        	
+
 	        	map.put(threads.getString(i), new HashMap<String, LolObj>());
 	        	
 	        	lolCount = 0;

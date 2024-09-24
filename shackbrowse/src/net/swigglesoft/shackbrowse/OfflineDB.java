@@ -1,5 +1,6 @@
 package net.swigglesoft.shackbrowse;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -66,7 +67,13 @@ public class OfflineDB
 	}
 
 	private SavedThreadObj cursorToSavedThread(Cursor cursor) {
-		SavedThreadObj t = new SavedThreadObj(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_STID)),cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SPOSTEDTIME)),cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SJSON)));
+		int rootId = cursor.getColumnIndex(DatabaseHelper.COLUMN_STID);
+		@SuppressLint("Range")
+		SavedThreadObj t = new SavedThreadObj(
+				cursor.getInt(rootId <= 0 ? 0 : rootId),
+				cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SPOSTEDTIME)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SJSON))
+		);
 		return t;
 	}
 

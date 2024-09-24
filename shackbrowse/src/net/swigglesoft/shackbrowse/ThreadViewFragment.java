@@ -79,26 +79,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
+
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
+import androidx.media3.common.MediaItem;
+import androidx.media3.ui.AspectRatioFrameLayout;
+
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 
 import net.swigglesoft.CheckableTableLayout;
@@ -1302,10 +1289,10 @@ public class ThreadViewFragment extends ListFragment
 		private class ExoPlayerTracker
 		{
 			PlayerView mPlayerView;
-			SimpleExoPlayer mPlayer;
+			ExoPlayer mPlayer;
 			int mPosition;
 			String mTag;
-			ExoPlayerTracker (int position, PlayerView playerView, SimpleExoPlayer player, String tag)
+			ExoPlayerTracker (int position, PlayerView playerView, ExoPlayer player, String tag)
 			{
 				mPlayer = player; mPlayerView = playerView; mPosition = position; mTag = tag;
 			}
@@ -2114,50 +2101,25 @@ public class ThreadViewFragment extends ListFragment
 						if (!recycle)
 						{
 							final PlayerView view = new PlayerView(getContext());
-							// 1. Create a default TrackSelector
-							Handler mainHandler = new Handler();
-							DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-
-							AdaptiveTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
-							TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-
-							// 2. Create the player
-							SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-
+							// Create the player
+							ExoPlayer player = new ExoPlayer.Builder(getContext()).build();
 							view.setPlayer(player);
 
 							// track player items to avoid memory leaks
 							ExoPlayerTracker trackItem = new ExoPlayerTracker(position, view, player, postClip.url.getURL());
 							mExoPlayers.add(trackItem);
 
-							// Produces DataSource instances through which media data is loaded.
-							DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-									Util.getUserAgent(getContext(), "yourApplicationName"), bandwidthMeter);
-							// This is the MediaSource representing the media to be played.
-							MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(PopupBrowserFragment.getGIFVtoMP4(postClip.url.getURL())));
-							// Prepare the player with the source.
-							player.prepare(videoSource);
-							player.setPlayWhenReady((position == 0 || !mViewIsOpen ? false : true));
+							// This is the MediaItem representing the media to be played.
+							Uri clipUri = Uri.parse(PopupBrowserFragment.getGIFVtoMP4(postClip.url.getURL()));
+							MediaItem mediaItem = MediaItem.fromUri(clipUri);
+							player.setMediaItem(mediaItem);
+							boolean playWhenReady = position == 0 || mViewIsOpen;
+							player.setPlayWhenReady(playWhenReady);
 							player.setRepeatMode(Player.REPEAT_MODE_ONE);
 							view.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
-							//view.setControllerAutoShow(false);
-							player.addListener(new Player.EventListener()
+							view.setControllerAutoShow(false);
+							player.addListener(new Player.Listener()
 							{
-								@Override
-								public void onTimelineChanged(Timeline timeline, Object manifest, int reason)
-								{
-								}
-
-								@Override
-								public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections)
-								{
-								}
-
-								@Override
-								public void onLoadingChanged(boolean isLoading)
-								{
-								}
-
 								@Override
 								public void onPlayerStateChanged(boolean playWhenReady, int playbackState)
 								{
@@ -2170,21 +2132,6 @@ public class ThreadViewFragment extends ListFragment
 										view.setTag(i);
 									}
 									System.out.println("VIDonplayerstatecha" + playbackState + playWhenReady);
-								}
-
-								@Override
-								public void onRepeatModeChanged(int repeatMode)
-								{
-								}
-
-								@Override
-								public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled)
-								{
-								}
-
-								@Override
-								public void onPlayerError(ExoPlaybackException error)
-								{
 								}
 
 								@Override
@@ -2202,17 +2149,8 @@ public class ThreadViewFragment extends ListFragment
 									}
 									view.setTag(i);
 								}
-
-								@Override
-								public void onPlaybackParametersChanged(PlaybackParameters playbackParameters)
-								{
-								}
-
-								@Override
-								public void onSeekProcessed()
-								{
-								}
 							});
+							player.prepare();
 							holder.postContent.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 						}
 

@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,7 +43,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -63,8 +60,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseIntArray;
 
-import com.google.android.gms.common.util.IOUtils;
-
 
 public class ShackApi
 {
@@ -72,9 +67,6 @@ public class ShackApi
 	private static final int socketTimeoutSec = 35;
     public static final double POST_EXPIRY_HOURS = 24d;
     static final String USER_AGENT = "shackbrowse/7.0";
-    
-    static final String IMAGE_LOGIN_URL = "http://chattypics.com/users.php?act=login_go";
-    static final String IMAGE_UPLOAD_URL = "http://chattypics.com/upload.php";
     
     static final String LOGIN_URL = "https://www.shacknews.com/account/signin";
     static final String CHECKUSER_URL = "https://www.shacknews.com/account/username_exists";
@@ -201,129 +193,7 @@ public class ShackApi
         
         throw new Exception("Invalid mod type: " + moderation);
     }
-    
-    public static String loginToUploadImage(String userName, String password) throws Exception
-    {
-        BasicResponseHandler response_handler = new BasicResponseHandler();
-        DefaultHttpClient client = new DefaultHttpClient();
-        final HttpParams httpParameters = client.getParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
-        HttpConnectionParams.setSoTimeout(httpParameters, socketTimeoutSec * 1000);
-        HttpPost post = new HttpPost(IMAGE_LOGIN_URL);
-        post.setHeader("User-Agent", USER_AGENT);
-        
-        List<NameValuePair> values = new ArrayList<NameValuePair>();
-        values.add(new BasicNameValuePair("user_name", userName));
-        values.add(new BasicNameValuePair("user_password", password));
-        
-        UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
-        post.setEntity(e);
-        
-        String content = client.execute(post, response_handler);
-        if (content.contains("successfully been logged in"))
-        {
-            List<Cookie> cookies = client.getCookieStore().getCookies();
-            return cookies.get(0).getName() + "=" + cookies.get(0).getValue();
-        }
-        
-        return null;
-    }
 
-
-	public static String uploadImage(String imageLocation, String cookie) throws Exception
-	{
-		return uploadImage(imageLocation, cookie, "jpg");
-	}
-    public static String uploadImage(String imageLocation, String cookie, String extension) throws Exception
-    {
-        File file = new File(imageLocation);
-        String name = file.getName();
-        name = "shackbrowseUpload." + extension;
-        FileEntity e = new FileEntity(file, "image");
-        
-        String BOUNDARY = "648f67b67d304b01f84ceb0e0c56c8b7";
-        
-        URL post_url = new URL(IMAGE_UPLOAD_URL);
-        URLConnection con = post_url.openConnection();
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        if (cookie != null)
-            con.setRequestProperty("Cookie", cookie);
-        con.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + BOUNDARY);
-        
-        // write our request
-        con.setDoOutput(true);
-        java.io.OutputStream os = con.getOutputStream();
-        try
-        {
-            DataOutputStream dos = new DataOutputStream(os);
-            dos.writeBytes("--" + BOUNDARY + "\r\n");
-            dos.writeBytes("Content-Disposition: form-data; name=\"userfile[]\";filename=\"" + name + "\"\r\n\r\n");
-
-            e.writeTo(os);
-            
-            dos.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
-            os.flush();
-        }
-        finally
-        {
-            os.close();
-        }
-        
-        // read the response
-        java.io.InputStream input = con.getInputStream();
-        try
-        {
-            return readStream(input);
-        }
-        finally
-        {
-            input.close();
-        }
-    }
-	public static String uploadImageFromInputStream(InputStream inputfile, String cookie, String extension) throws Exception
-	{
-		String name = "shackbrowseUpload." + extension;
-
-		String BOUNDARY = "648f67b67d304b01f84ceb0e0c56c8b7";
-
-		URL post_url = new URL(IMAGE_UPLOAD_URL);
-		URLConnection con = post_url.openConnection();
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		if (cookie != null)
-			con.setRequestProperty("Cookie", cookie);
-		con.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + BOUNDARY);
-
-		// write our request
-		con.setDoOutput(true);
-		java.io.OutputStream os = con.getOutputStream();
-		try
-		{
-			DataOutputStream dos = new DataOutputStream(os);
-			dos.writeBytes("--" + BOUNDARY + "\r\n");
-			dos.writeBytes("Content-Disposition: form-data; name=\"userfile[]\";filename=\"" + name + "\"\r\n\r\n");
-
-			IOUtils.copyStream(inputfile,os);
-
-			dos.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
-			os.flush();
-		}
-		finally
-		{
-			os.close();
-		}
-
-		// read the response
-		java.io.InputStream input = con.getInputStream();
-		try
-		{
-			return readStream(input);
-		}
-		finally
-		{
-			input.close();
-		}
-	}
-    
     public static ArrayList<SearchResult> search(String term, String author, String parentAuthor, int pageNumber, Context context) throws Exception
     {
     	return search(term, author, parentAuthor, "", pageNumber, context);

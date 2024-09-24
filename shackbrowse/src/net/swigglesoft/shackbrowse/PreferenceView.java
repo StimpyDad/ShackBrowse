@@ -172,39 +172,6 @@ public class PreferenceView extends PreferenceFragment
 				return false;
 			}}
 		);
-
-        mChattyPicsEnable = (CheckBoxPreference)findPreference("enableChattyPics");
-        mChattyPicsEnable.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                PackageManager pm = getActivity().getPackageManager();
-                ComponentName compName =  new ComponentName(getActivity().getApplicationContext(), PicUploader.class);
-                final Boolean checked = (Boolean)newValue;
-                pm.setComponentEnabledSetting(compName, checked ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                return true;
-            }
-        });
-        PackageManager pm = getActivity().getPackageManager();
-        ComponentName compName =  new ComponentName(getActivity().getApplicationContext(), PicUploader.class);
-        if ((pm.getComponentEnabledSetting(compName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) || (pm.getComponentEnabledSetting(compName) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED))
-        {
-            mChattyPicsEnable.setChecked(true);
-        }
-        else
-        {
-            mChattyPicsEnable.setChecked(false);
-        }
-
-//        Preference pingPref = (Preference) findPreference("pref_ping");
-//        pingPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-//
-//			@Override
-//			public boolean onPreferenceClick(Preference preference) {
-//				System.out.println("pinging");
-//		    	new PingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//		    	return false;
-//			}}
-//        );
     }
 
     @Override

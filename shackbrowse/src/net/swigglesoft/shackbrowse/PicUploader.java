@@ -43,8 +43,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.StackingBehavior;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import net.swigglesoft.shackbrowse.imgur.ImgurAuthorization;
+import net.swigglesoft.shackbrowse.imgur.ImgurUploadResponse;
 
 import org.json.JSONObject;
 
@@ -175,12 +177,20 @@ public class PicUploader extends AppCompatActivity {
 				.neutralText("Do NOT Upload").show();
 	}
 
-	class UploadUriAndInsertTask extends AsyncTask<String, Void, String>
-	{
-		Exception _exception;
+	class UploadResult {
+		public String link;
+		public String errorMessage;
 
+		UploadResult(String link, String errorMessage) {
+			this.link = link;
+			this.errorMessage = errorMessage;
+		}
+	}
+
+	class UploadUriAndInsertTask extends AsyncTask<String, Void, UploadResult>
+	{
 		@Override
-		protected String doInBackground(String... params)
+		protected UploadResult doInBackground(String... params)
 		{
 			try
 			{
@@ -205,58 +215,28 @@ public class PicUploader extends AppCompatActivity {
 					inputstream = new ByteArrayInputStream(stream.toByteArray());
 				}
 
-				boolean chattyPics = false;
-				if (params[1].equalsIgnoreCase("chattypics"))
+				ImgurUploadResponse imgurResponse = uploadImageToImgur(inputstream);
+				if (imgurResponse.success)
 				{
-					chattyPics = true;
-				}
-				if (chattyPics)
-				{
-					String userName = _prefs.getString("chattyPicsUserName", null);
-					String password = _prefs.getString("chattyPicsPassword", null);
-
-					// attempt to log in so the image will appear in the user's gallery
-					String login_cookie = null;
-					if (userName != null && password != null)
-						login_cookie = ShackApi.loginToUploadImage(userName, password);
-
-					// actually upload the thing
-					String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
-
-					Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
-					Matcher match = p.matcher(content);
-
-					if (match.find())
-						return "http://chattypics.com/files/" + match.group(1);
-				}
-				else
-				{
-					String userName = _prefs.getString("imgurUserName", null);
-					String password = _prefs.getString("imgurPassword", null);
-
-					JSONObject response = uploadImageToImgur(inputstream);
-					if (response != null)
+					JSONObject jsonObject = imgurResponse.response;
+					String link = "";
+					if (jsonObject.getJSONObject("data").has("gifv"))
 					{
-						String link = "";
-						if (response.getJSONObject("data").has("gifv"))
-						{
-							link = response.getJSONObject("data").getString("gifv");
-						}
-						else if (response.getJSONObject("data").has("link"))
-						{
-							link = response.getJSONObject("data").getString("link");
-						}
-						return link;
+						link = jsonObject.getJSONObject("data").getString("gifv");
 					}
+					else if (jsonObject.getJSONObject("data").has("link"))
+					{
+						link = jsonObject.getJSONObject("data").getString("link");
+					}
+					return new UploadResult(link, null);
 				}
-
-				return null;
+				return new UploadResult(null, imgurResponse.errorMessage);
 			}
 			catch (Exception e)
 			{
 				Log.e("shackbrowse", "Error posting image", e);
-				_exception = e;
-				return null;
+				FirebaseCrashlytics.getInstance().recordException(e);
+				return new UploadResult(null, "Error posting image: " + e.getMessage());
 			}
 		}
 
@@ -347,7 +327,7 @@ public class PicUploader extends AppCompatActivity {
 		}
 
 		@Override
-		protected void onPostExecute(String result)
+		protected void onPostExecute(UploadResult result)
 		{
 			try {
 				_progressDialog.dismiss();
@@ -355,19 +335,14 @@ public class PicUploader extends AppCompatActivity {
 			catch (Exception e)
 			{}
 
-			if (_exception != null)
+			if (result.errorMessage != null)
 			{
 				System.out.println("imgupload: err");
-				ErrorDialog.display(PicUploader.this, "Error", "Error posting:\n" + _exception.getMessage());
-			}
-			else if (result == null)
-			{
-				System.out.println("imgupload: err");
-				ErrorDialog.display(PicUploader.this, "Error", "Couldn't find image URL after uploading.");
+				ErrorDialog.display(PicUploader.this, "Error", "Error occurred with image upload, message: " + result.errorMessage);
 			}
 			else
 			{
-				final String result1 = result;
+				final String result1 = result.link;
 				runOnUiThread(new Runnable(){
 					@Override public void run()
 					{
@@ -443,259 +418,4 @@ public class PicUploader extends AppCompatActivity {
 		return mime.getExtensionFromMimeType(opt.outMimeType);
 	}
 
-	void uploadURI_old()
-	{
-		Uri imageUri = mImageUri;
-		// create dialog with thumbnail
-		LinearLayout parent = new LinearLayout(this);
-		parent.setPadding(2, 2, 2, 2);
-		parent.setOrientation(LinearLayout.VERTICAL);
-		TextView text = new TextView(this);
-		text.setText("This will upload the selected image to the internet for public consumption. Continue?");
-		text.setTextColor(Color.WHITE);
-		text.setPadding(3, 3, 3, 3);
-		ImageView image = new ImageView(this);
-		image.setAdjustViewBounds(true);
-		image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-		if (imageUri != null) { image.setImageURI(imageUri); System.out.println("UPLOADIMAGEuri: " + imageUri.toString()); }
-		parent.addView(image,  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		parent.addView(text);
-		new MaterialDialog.Builder(this)
-				.title("Really upload?")
-				.customView(parent, true)
-				.positiveText("Upload It")
-				.onPositive(new MaterialDialog.SingleButtonCallback()
-				{
-					@Override
-					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-					{
-						_progressDialog = MaterialProgressDialog.show(PicUploader.this, "Upload", "Uploading image to chattypics");
-						if (imageUri != null)
-						{
-							new UploadUriAndInsertTask_Old().execute(imageUri);
-							statInc(PicUploader.this, "ImagesToChattyPics");
-						}
-						else
-						{
-							_progressDialog.dismiss();
-						}
-					}
-				}).negativeText("Do NOT Upload").show();
-	}
-
-	class UploadUriAndInsertTask_Old extends AsyncTask<Uri, Void, String>
-	{
-		Exception _exception;
-
-		@Override
-		protected String doInBackground(Uri... params)
-		{
-			try
-			{
-				Uri uri = params[0];
-				String ext = getMimeTypeOfUri(PicUploader.this, uri);
-				InputStream inputstream = getContentResolver().openInputStream(uri);
-
-				if (ext == null)
-				{
-					ext = "jpg";
-				}
-
-				// resize jpeg
-				if ((ext == "jpg") || (ext == "jpeg"))
-				{
-					System.out.println("UPLOADuri: RESIZE");
-					Bitmap img = handleSamplingAndRotationBitmap(uri);
-					final BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					img.compress(CompressFormat.JPEG, 100, stream);
-					inputstream = new ByteArrayInputStream(stream.toByteArray());
-				}
-
-				String userName = _prefs.getString("chattyPicsUserName", null);
-				String password = _prefs.getString("chattyPicsPassword", null);
-
-				// attempt to log in so the image will appear in the user's gallery
-				String login_cookie = null;
-				if (userName != null && password != null)
-					login_cookie = ShackApi.loginToUploadImage(userName, password);
-
-				// actually upload the thing
-				String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
-
-				Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
-				Matcher match = p.matcher(content);
-
-				if (match.find())
-					return "http://chattypics.com/files/" + match.group(1);
-
-				return null;
-			}
-			catch (Exception e)
-			{
-				Log.e("shackbrowse", "Error posting image", e);
-				_exception = e;
-				return null;
-			}
-		}
-
-		public Bitmap handleSamplingAndRotationBitmap(Uri selectedImage) throws IOException
-		{
-			int MAX_HEIGHT = 1600;
-			int MAX_WIDTH = 1600;
-
-			// First decode with inJustDecodeBounds=true to check dimensions
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			InputStream imageStream = PicUploader.this.getContentResolver().openInputStream(selectedImage);
-			BitmapFactory.decodeStream(imageStream, null, options);
-			imageStream.close();
-
-			// Calculate inSampleSize
-			options.inSampleSize = calculateInSampleSize(options, MAX_WIDTH, MAX_HEIGHT);
-
-			// Decode bitmap with inSampleSize set
-			options.inJustDecodeBounds = false;
-			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-			imageStream = PicUploader.this.getContentResolver().openInputStream(selectedImage);
-			Bitmap img = BitmapFactory.decodeStream(imageStream, null, options);
-
-			img = rotateImageIfRequired(PicUploader.this, img, selectedImage);
-			return img;
-		}
-		private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-			// Raw height and width of image
-			final int height = options.outHeight;
-			final int width = options.outWidth;
-			int inSampleSize = 1;
-
-			if (height > reqHeight || width > reqWidth) {
-
-				// Calculate ratios of height and width to requested height and width
-				final int heightRatio = Math.round((float) height / (float) reqHeight);
-				final int widthRatio = Math.round((float) width / (float) reqWidth);
-
-				// Choose the smallest ratio as inSampleSize value, this will guarantee a final image
-				// with both dimensions larger than or equal to the requested height and width.
-				inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-
-				// This offers some additional logic in case the image has a strange
-				// aspect ratio. For example, a panorama may have a much larger
-				// width than height. In these cases the total pixels might still
-				// end up being too large to fit comfortably in memory, so we should
-				// be more aggressive with sample down the image (=larger inSampleSize).
-
-				final float totalPixels = width * height;
-
-				// Anything more than 2x the requested pixels we'll sample down further
-				final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-
-				while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-					inSampleSize++;
-				}
-			}
-			return inSampleSize;
-		}
-		private Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
-
-			InputStream input = context.getContentResolver().openInputStream(selectedImage);
-			ExifInterface ei;
-			if (Build.VERSION.SDK_INT > 23)
-				ei = new ExifInterface(input);
-			else
-				ei = new ExifInterface(selectedImage.getPath());
-
-			int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-			switch (orientation) {
-				case ExifInterface.ORIENTATION_ROTATE_90:
-					return rotateImage(img, 90);
-				case ExifInterface.ORIENTATION_ROTATE_180:
-					return rotateImage(img, 180);
-				case ExifInterface.ORIENTATION_ROTATE_270:
-					return rotateImage(img, 270);
-				default:
-					return img;
-			}
-		}
-		private Bitmap rotateImage(Bitmap img, int degree) {
-			Matrix matrix = new Matrix();
-			matrix.postRotate(degree);
-			Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-			img.recycle();
-			return rotatedImg;
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try {
-				_progressDialog.dismiss();
-			}
-			catch (Exception e)
-			{}
-
-			if (_exception != null)
-			{
-				System.out.println("imgupload: err");
-				ErrorDialog.display(PicUploader.this, "Error", "Error posting:\n" + _exception.getMessage());
-			}
-			else if (result == null)
-			{
-				System.out.println("imgupload: err");
-				ErrorDialog.display(PicUploader.this, "Error", "Couldn't find image URL after uploading.");
-			}
-			else
-			{
-				final String result1 = result;
-				runOnUiThread(new Runnable(){
-					@Override public void run()
-					{
-						AlertDialog.Builder builder = new AlertDialog.Builder(PicUploader.this);
-						builder.setTitle("Image Uploaded");
-						builder.setMessage("Do what with the image URL?");
-						builder.setCancelable(true);
-						builder.setPositiveButton("New Root Shack Post", new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int id)
-							{
-								Intent sendIntent = new Intent();
-								sendIntent.setAction(Intent.ACTION_SEND);
-								sendIntent.putExtra(Intent.EXTRA_TEXT, result1);
-								sendIntent.setType("text/plain");
-								sendIntent.setClass(getApplication(), MainActivity.class);
-								startActivity(sendIntent);
-								finish();
-							}
-						});
-						builder.setNeutralButton("Append to Clipboard", new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int id)
-							{
-
-								ClipboardManager clipboard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
-
-								clipboard.setText(clipboard.getText() + "\n" + result1);
-								Toast.makeText(PicUploader.this, clipboard.getText(), Toast.LENGTH_LONG).show();
-								finish();
-							}
-						});
-						builder.setNegativeButton("Replace Clipboard", new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int id)
-							{
-
-								ClipboardManager clipboard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
-								clipboard.setText(result1);
-								Toast.makeText(PicUploader.this, result1, Toast.LENGTH_LONG).show();
-								finish();
-							}
-						});
-						builder.create().show();
-					}
-				});
-			}
-		}
-	}
 }

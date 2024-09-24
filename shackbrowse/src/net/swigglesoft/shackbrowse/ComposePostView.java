@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import net.swigglesoft.EditTextSelectionSavedAllowImage;
 import net.swigglesoft.shackbrowse.imgur.ImgurAuthorization;
 import net.swigglesoft.shackbrowse.imgur.ImgurTools;
+import net.swigglesoft.shackbrowse.imgur.ImgurUploadResponse;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -1676,12 +1677,20 @@ public class ComposePostView extends AppCompatActivity {
 		return mime.getExtensionFromMimeType(opt.outMimeType);
 	}
 
-	class UploadUriAndInsertTask extends AsyncTask<String, Void, String>
-	{
-		Exception _exception;
+	class UploadResult {
+		public String link;
+		public String errorMessage;
 
+		UploadResult(String link, String errorMessage) {
+			this.link = link;
+			this.errorMessage = errorMessage;
+		}
+	}
+
+	class UploadUriAndInsertTask extends AsyncTask<String, Void, UploadResult>
+	{
 		@Override
-		protected String doInBackground(String... params)
+		protected UploadResult doInBackground(String... params)
 		{
 			try
 			{
@@ -1706,58 +1715,27 @@ public class ComposePostView extends AppCompatActivity {
 					inputstream = new ByteArrayInputStream(stream.toByteArray());
 				}
 
-				boolean chattyPics = false;
-				if (params[1].equalsIgnoreCase("chattypics"))
+				ImgurUploadResponse imgurResponse = uploadImageToImgur(inputstream);
+				if (imgurResponse.success)
 				{
-					chattyPics = true;
-				}
-				if (chattyPics)
-				{
-					String userName = _prefs.getString("chattyPicsUserName", null);
-					String password = _prefs.getString("chattyPicsPassword", null);
-
-					// attempt to log in so the image will appear in the user's gallery
-					String login_cookie = null;
-					if (userName != null && password != null)
-						login_cookie = ShackApi.loginToUploadImage(userName, password);
-
-					// actually upload the thing
-					String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
-
-					Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
-					Matcher match = p.matcher(content);
-
-					if (match.find())
-						return "http://chattypics.com/files/" + match.group(1);
-				}
-				else
-				{
-					String userName = _prefs.getString("imgurUserName", null);
-					String password = _prefs.getString("imgurPassword", null);
-
-					JSONObject response = uploadImageToImgur(inputstream);
-					if (response != null)
+					JSONObject response = imgurResponse.response;
+					String link = "";
+					if (response.getJSONObject("data").has("gifv"))
 					{
-						String link = "";
-						if (response.getJSONObject("data").has("gifv"))
-						{
-							link = response.getJSONObject("data").getString("gifv");
-						}
-						else if (response.getJSONObject("data").has("link"))
-						{
-							link = response.getJSONObject("data").getString("link");
-						}
-						return link;
+						link = response.getJSONObject("data").getString("gifv");
 					}
+					else if (response.getJSONObject("data").has("link"))
+					{
+						link = response.getJSONObject("data").getString("link");
+					}
+					return new UploadResult(link, null);
 				}
-
-				return null;
+				return new UploadResult(null, imgurResponse.errorMessage);
 			}
 			catch (Exception e)
 			{
 				Log.e("shackbrowse", "Error posting image", e);
-				_exception = e;
-				return null;
+				return new UploadResult(null, "Error posting image: " + e.getMessage());
 			}
 		}
 
@@ -1848,7 +1826,7 @@ public class ComposePostView extends AppCompatActivity {
 		}
 
 		@Override
-		protected void onPostExecute(String result)
+		protected void onPostExecute(UploadResult result)
 		{
 			try {
 				_progressDialog.dismiss();
@@ -1856,19 +1834,14 @@ public class ComposePostView extends AppCompatActivity {
 			catch (Exception e)
 			{}
 
-			if (_exception != null)
+			if (result.errorMessage != null)
 			{
 				System.out.println("imgupload: err");
-				ErrorDialog.display(ComposePostView.this, "Error", "Error posting:\n" + _exception.getMessage());
-			}
-			else if (result == null)
-			{
-				System.out.println("imgupload: err");
-				ErrorDialog.display(ComposePostView.this, "Error", "Couldn't find image URL after uploading.");
+				ErrorDialog.display(ComposePostView.this, "Error", "Error occurred with image upload, message: " + result.errorMessage);
 			}
 			else
 			{
-				final String result1 = result;
+				final String result1 = result.link;
 				runOnUiThread(new Runnable(){
 					@Override public void run()
 					{

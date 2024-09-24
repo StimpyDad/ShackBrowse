@@ -236,7 +236,7 @@ public class ShackMessageCheck
 	// used for sending fake notifications to the notifierreceiver. check for sms locally, then send notification!
 	private void sendSMBroadcast(String username, String text, int nlsid, boolean multiple, int howMany) {
 		ShackMessageNotifierReceiver receiver = new ShackMessageNotifierReceiver();
-		_context.registerReceiver(receiver, new IntentFilter( "net.swigglesoft.fakenotification" ) );
+		_context.registerReceiver(receiver, new IntentFilter( "net.swigglesoft.fakenotification" ), Context.RECEIVER_NOT_EXPORTED );
 
 		Intent broadcast = new Intent();
 		broadcast.putExtra("type", "shackmsg");

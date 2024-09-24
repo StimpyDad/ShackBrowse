@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
@@ -18,10 +20,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+
 public class ImgurTools
 {
 	private static final String TAG = ImgurTools.class.getSimpleName();
-	private static final String UPLOAD_URL = "https://api.imgur.com/3/image";
+	private static final String UPLOAD_URL = "https://api.imgur.com/3/imge";
 
 	public static class RefreshAccessTokenTask extends AsyncTask<Void, Void, String> {
 
@@ -63,10 +66,11 @@ public class ImgurTools
 		return encodedData.length();
 	}
 
-	public static JSONObject uploadImageToImgur (InputStream imageIn)
+	public static ImgurUploadResponse uploadImageToImgur (InputStream imageIn)
 	{
 		HttpURLConnection conn = null;
 		InputStream responseIn = null;
+		ImgurUploadResponse responseObject = null;
 
 		try {
 			conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
@@ -85,22 +89,26 @@ public class ImgurTools
 
 			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				responseIn = conn.getInputStream();
-				return onInput(responseIn);
+				responseObject = new ImgurUploadResponse(true, onInput(responseIn), null, null);
 			}
 			else {
-				Log.i(TAG, "responseCode=" + conn.getResponseCode());
+				String responseCode = String.valueOf(conn.getResponseCode());
+				Log.i(TAG, "responseCode=" + responseCode);
 				responseIn = conn.getErrorStream();
 				StringBuilder sb = new StringBuilder();
 				Scanner scanner = new Scanner(responseIn);
 				while (scanner.hasNext()) {
 					sb.append(scanner.next());
 				}
-				Log.i(TAG, "error response: " + sb.toString());
-				return null;
+				String errorMessage = "uploadImageToImgur error responseCode: " + responseCode + ",response: " + sb.toString();
+				Log.i(TAG, errorMessage);
+				FirebaseCrashlytics.getInstance().log(errorMessage);
+				responseObject = new ImgurUploadResponse(false, null, errorMessage, null);
 			}
 		} catch (Exception ex) {
 			Log.e(TAG, "Error during POST", ex);
-			return null;
+			FirebaseCrashlytics.getInstance().recordException(ex);
+			responseObject = new ImgurUploadResponse(false, null, "Error during POST: " + ex.getMessage(), ex);
 		} finally {
 			try {
 				responseIn.close();
@@ -112,5 +120,6 @@ public class ImgurTools
 				imageIn.close();
 			} catch (Exception ignore) {}
 		}
+		return responseObject;
 	}
 }

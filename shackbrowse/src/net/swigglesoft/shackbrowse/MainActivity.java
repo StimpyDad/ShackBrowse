@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -71,6 +72,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import android.text.ClipboardManager;
 import android.text.Editable;
@@ -110,12 +113,13 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.material.appbar.AppBarLayout;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
-import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerFullScreenListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.ui.PlayerUIController;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.FullscreenListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
 
 import static net.swigglesoft.shackbrowse.StatsFragment.statInc;
 
@@ -139,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private int _orientLock = 0;
 
 	SharedPreferences _prefs;
-	private ArrayList<Integer> _threadIdBackStack = new ArrayList<Integer>();
+	private ArrayList<Integer> _threadIdBackStack = new ArrayList<>();
 
 	SlideFrame _tviewFrame;
 	SlideFrame _sresFrame;
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public SmoothProgressBar mProgressBar;
 	private long mTimeStartedToShowSplash = 0L;
 	private YouTubePlayer mYoutubePlayer;
+	private DefaultPlayerUiController mYouTubeUIController;
 //	private NetworkEchoChamberServer mEchoAccess;
 	public JSONArray mBlockList;
 	private JSONArray mAutoChamber;
@@ -237,7 +242,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// enforce overflow menu
 		try {
 	        ViewConfiguration config = ViewConfiguration.get(this);
-	        Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+	        @SuppressLint("SoonBlockedPrivateApi")
+			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
 	        if(menuKeyField != null) {
 	            menuKeyField.setAccessible(true);
 	            menuKeyField.setBoolean(config, false);
@@ -1103,7 +1110,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 }
             });
             sview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if ((_threadView != null) && (_threadView._adapter != null)) {
@@ -1131,6 +1137,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 }
             });
         }
+
         MenuItemCompat.setOnActionExpandListener(mHighlighter,new MenuItemCompat.OnActionExpandListener(){
 			@Override
 			public boolean onMenuItemActionCollapse(MenuItem arg0) {
@@ -1154,13 +1161,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 					_threadView._highlighting = true;
 				}
 				return true;
-			}});
-
+			}
+		});
 
 		MenuItem menuRefreshItem = menu.findItem(R.id.menu_refreshThreads);
 		MenuItem menuNewpostItem = menu.findItem(R.id.menu_newPost);
-	    mFinder = menu.findItem(R.id.menu_findOnPage);
 
+		mFinder = menu.findItem(R.id.menu_findOnPage);
         MenuItemCompat.setOnActionExpandListener(mFinder, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem arg0) {
@@ -1198,7 +1205,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	    final SearchView sview2 = (SearchView)mFinder.getActionView();
 	    sview2.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				System.out.println("AUTOCOMP: OQTC: " + newText);
@@ -1225,7 +1231,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				sview.setVisibility(View.INVISIBLE);
 				sview.setVisibility(View.VISIBLE);
 				return false;
-			}});
+			}
+		});
 
 	    return super.onCreateOptionsMenu(menu);
 	}
@@ -2423,7 +2430,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
     	if (isYTOpen() && mYoutubeFullscreen)
 	    {
-	    	mYoutubeView.exitFullScreen();
+			//mYoutubeView.exitFullScreen(); // exitFullScreen no longer available, try remove
+			mYoutubeView.removeAllViews();
 	    }
 		else if (isMenuOpen())
 		{
@@ -3180,26 +3188,28 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         final CharSequence[] items = { "30 seconds","1 minute","2 minutes","5 minutes (default)","10 minutes"};
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-            	
             	int len = 30;
-            	if (item == 1)
-            		len = 60;
-                if (item == 2)
-                	len = 120;
-                if (item == 3)
-                	len = 300;
-                if (item == 4)
-                	len = 600;
-                
+            	if (item == 1) {
+					len = 60;
+				}
+                if (item == 2) {
+					len = 120;
+				}
+                if (item == 3) {
+					len = 300;
+				}
+                if (item == 4) {
+					len = 600;
+				}
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 	        	SharedPreferences.Editor editor = prefs.edit();
             	editor.putInt("cloudInterval", len);
             	editor.commit();
-                }});
+			}
+		});
         AlertDialog alert = builder.create();
         alert.setCanceledOnTouchOutside(true);
         alert.show();
-		
 	}
 
     public String getCloudUsername()
@@ -3799,22 +3809,21 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             mSplashOpen = true;
             FragmentManager fM = getFragmentManager();
             FragmentTransaction fT = fM.beginTransaction();
-                    fT.show(_loadingSplash);
-                    fT.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fT.show(_loadingSplash);
+			fT.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
-
-            if (_currentFragmentType == CONTENT_FRONTPAGE) {
-                        fT.hide(_articleViewer);
+			if (_currentFragmentType == CONTENT_FRONTPAGE) {
+				fT.hide(_articleViewer);
             }
-			if (mCurrentFragment != null)
-                fT.hide(mCurrentFragment);
+			if (mCurrentFragment != null) {
+				fT.hide(mCurrentFragment);
+			}
             fT.commit();
 
             _loadingSplash.randomizeTagline();
             _loadingSplash.showEcho();
         }
-
-    }
+	}
 
     public void hideLoadingSplash()
     {
@@ -3948,52 +3957,39 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		RelativeLayout ytHolder = (RelativeLayout) findViewById(R.id.tlist_ytholder);
 		ytHolder.addView(mYoutubeView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		mYoutubeView.setVisibility(View.VISIBLE);
-		PlayerUIController puic = mYoutubeView.getPlayerUIController();
+
+		mYouTubeUIController = new DefaultPlayerUiController(mYoutubeView, mYoutubePlayer);
 
 		Drawable myIcon = getResources().getDrawable(R.drawable.ic_action_content_clear);
 		ImageView close = new ImageView(this);
 		close.setImageResource(R.drawable.ic_action_content_clear);
-		close.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				closeYoutube();
-			}
-		});
-		puic.addView(close);
+		close.setOnClickListener(view -> closeYoutube());
+		mYouTubeUIController.addView(close);
 
-		mYoutubeView.addFullScreenListener(new YouTubePlayerFullScreenListener(){
+		mYoutubeView.addFullscreenListener(new FullscreenListener() {
 			@Override
-			public void onYouTubePlayerEnterFullScreen()
-			{
+			public void onEnterFullscreen(@NonNull View view, @NonNull Function0<Unit> function0) {
 				mYoutubeFullscreen = true;
-				// ActionBar actionBar = mToolbar;
-				// actionBar.hide();
-				View decorView = getWindow().getDecorView();
+
 				// Hide the status bar.
+				View decorView = getWindow().getDecorView();
 				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 				decorView.setSystemUiVisibility(uiOptions);
-
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
 				resizeOtherContentHeightsForYoutube();
 				evaluateAutoHide();
 			}
 
+
 			@Override
-			public void onYouTubePlayerExitFullScreen()
-			{
+			public void onExitFullscreen() {
 				mYoutubeFullscreen = false;
-				// ActionBar actionBar = mToolbar;
-				// actionBar.show();
+
+				// show status bar
 				View decorView = getWindow().getDecorView();
-				// Show the status bar.
 				int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
 				decorView.setSystemUiVisibility(uiOptions);
-
 				setOrientLock();
-
 				resizeOtherContentHeightsForYoutube();
 				evaluateAutoHide();
 			}
@@ -4001,18 +3997,56 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		final String youtubeId = PopupBrowserFragment.getYoutubeId(url);
 		final int youtubeTime = PopupBrowserFragment.getYoutubeTime(url);
-		mYoutubeView.initialize(new YouTubePlayerInitListener() {
+
+		mYoutubeView.initialize(new YouTubePlayerListener() {
 			@Override
-			public void onInitSuccess(final YouTubePlayer initializedYouTubePlayer) {
-				initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
-					@Override
+			public void onVideoId(@NonNull YouTubePlayer youTubePlayer, @NonNull String s) {
+				/* nothing to do */
+			}
+			@Override
+			public void onVideoLoadedFraction(@NonNull YouTubePlayer youTubePlayer, float v) {
+				/* nothing to do */
+			}
+			@Override
+			public void onVideoDuration(@NonNull YouTubePlayer youTubePlayer, float v) {
+				/* nothing to do */
+			}
+			@Override
+			public void onCurrentSecond(@NonNull YouTubePlayer youTubePlayer, float v) {
+				/* nothing to do */
+			}
+			@Override
+			public void onError(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlayerError playerError) {
+				/* nothing to do */
+			}
+			@Override
+			public void onApiChange(@NonNull YouTubePlayer youTubePlayer) {
+				/* nothing to do */
+			}
+			@Override
+			public void onPlaybackRateChange(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlaybackRate playbackRate) {
+				/* nothing to do */
+			}
+			@Override
+			public void onPlaybackQualityChange(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlaybackQuality playbackQuality) {
+				/* nothing to do */
+			}
+			@Override
+			public void onStateChange(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlayerState playerState) {
+				/* nothing to do */
+			}
+			@Override
+			public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+				youTubePlayer.addListener(new AbstractYouTubePlayerListener() {
 					public void onReady() {
-						initializedYouTubePlayer.loadVideo(youtubeId, youtubeTime);
-						mYoutubePlayer = initializedYouTubePlayer;
+						youTubePlayer.loadVideo(youtubeId, youtubeTime);
+						mYoutubePlayer = youTubePlayer;
 					}
 				});
 			}
 		}, true);
+
+
 
 		new getYTTitleTask().execute(youtubeId);
 
@@ -4022,7 +4056,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	public void closeYoutube()
 	{
-
 		if (mYoutubeFullscreen)
 		{
 			mYoutubeFullscreen = false;
@@ -4044,7 +4077,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		resizeOtherContentHeightsForYoutube();
 		evaluateAutoHide();
 	}
-	public boolean isYTOpen() { return ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false); }
+
+	public boolean isYTOpen()
+	{
+		return ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false);
+	}
 
 	private void resizeOtherContentHeightsForYoutube()
 	{
@@ -4064,8 +4101,12 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		@Override
 		protected void onPostExecute(String result)
 		{
-			if (isYTOpen())
-				mYoutubeView.getPlayerUIController().setVideoTitle(result);
+			if (isYTOpen()) {
+				if(mYouTubeUIController != null)
+				{
+					mYouTubeUIController.setVideoTitle(result);
+				}
+			}
 		}
 	}
 	/*

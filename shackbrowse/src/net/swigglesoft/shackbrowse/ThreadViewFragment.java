@@ -120,7 +120,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-
 import static net.swigglesoft.shackbrowse.LoadingSplashFragment.randInt;
 import static net.swigglesoft.shackbrowse.StatsFragment.statInc;
 import static net.swigglesoft.shackbrowse.StatsFragment.statMax;
@@ -2118,10 +2117,9 @@ public class ThreadViewFragment extends ListFragment
 							// 1. Create a default TrackSelector
 							Handler mainHandler = new Handler();
 							DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-							TrackSelection.Factory videoTrackSelectionFactory =
-									new AdaptiveTrackSelection.Factory(bandwidthMeter);
-							TrackSelector trackSelector =
-									new DefaultTrackSelector(videoTrackSelectionFactory);
+
+							AdaptiveTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
+							TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
 							// 2. Create the player
 							SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
@@ -2461,9 +2459,6 @@ public class ThreadViewFragment extends ListFragment
 								quad.start();
 							}
 						});
-						/*
-
-						 */
 					}
 					else if (p.getUserName().toLowerCase().equals("the man with the briefcase"))
 					{

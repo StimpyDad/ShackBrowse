@@ -401,8 +401,9 @@ class TagConverter implements ContentHandler
         
         public Underline(String color)
         {
-        	if (color == null)
-        		color = "white";
+        	if (color == null) {
+                color = "white";
+            }
             _color = color;
         }
         

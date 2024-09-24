@@ -866,7 +866,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	}
 
 	@Override
-    protected void onPostCreate(Bundle savedInstanceState) {
+    protected void onPostCreate(Bundle savedInstanceState)
+	{
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
@@ -1168,7 +1169,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		MenuItem menuNewpostItem = menu.findItem(R.id.menu_newPost);
 
 		mFinder = menu.findItem(R.id.menu_findOnPage);
-        MenuItemCompat.setOnActionExpandListener(mFinder, new MenuItemCompat.OnActionExpandListener() {
+
+		MenuItemCompat.setOnActionExpandListener(mFinder, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem arg0) {
 	            // save to list of suggestions
@@ -1298,8 +1300,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    });
 
 
-	    if ((!showTListItems) && (mFinder.isActionViewExpanded()))
-        	mFinder.collapseActionView();
+	    if ((!showTListItems) && (mFinder.isActionViewExpanded())) {
+			mFinder.collapseActionView();
+		}
         menu.findItem(R.id.menu_keywordFilter).setVisible(showTListItems);
         menu.findItem(R.id.menu_modtagFilter).setVisible(showTListItems);
         menu.findItem(R.id.menu_newPost).setVisible(showTListItems);
@@ -1316,30 +1319,33 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_editSearch).setVisible(isResultsOpen && (!isRepliesOpen || dualPane) && (!mPopupBrowserOpen) && (!isMenuOpen));
         
         menu.findItem(R.id.menu_findInThread).setVisible(showReplyViewItems);
-        if ((!showReplyViewItems) && (mHighlighter.isActionViewExpanded()))
-        	mHighlighter.collapseActionView();
+        if ((!showReplyViewItems) && (mHighlighter.isActionViewExpanded())) {
+			mHighlighter.collapseActionView();
+		}
 
-        // refresh replies
+		// refresh replies
         menu.findItem(R.id.menu_refreshReplies).setVisible(showReplyViewItems && !showMessageItems);
-        if (dualPane && !mStupidElectrolyOption)
-        	menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        else
-        	menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (dualPane && !mStupidElectrolyOption) {
+			menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		}
+        else {
+			menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		}
 
-        if (dualPane && mStupidElectrolyOption)
-		{
+        if (dualPane && mStupidElectrolyOption) {
 			menu.findItem(R.id.menu_refreshReplies).setIcon(R.drawable.exo_icon_repeat_all);
 		}
-        else
-		{
+        else {
 			menu.findItem(R.id.menu_refreshReplies).setIcon(R.drawable.ic_action_navigation_refresh);
 		}
 
         menu.findItem(R.id.menu_fastZoop).setVisible(showReplyViewItems);
-        if (mStupidFastzoopOption)
+        if (mStupidFastzoopOption) {
 			menu.findItem(R.id.menu_fastZoop).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		else
+		}
+		else {
 			menu.findItem(R.id.menu_fastZoop).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		}
 
         
         // these two are so complicated they are managed in the actual fragment
@@ -1383,20 +1389,23 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	{
 		setContentTo(type, null);
 	}
-	void setContentTo(int type, Bundle bundle) {
 
+	void setContentTo(int type, Bundle bundle)
+	{
 		AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
 		appBarLayout.setExpanded(true, true);
 
 		Fragment fragment = null;
-		if (bundle == null)
+		if (bundle == null) {
 			bundle = new Bundle();
+		}
 		
 		if (type == CONTENT_THREADLIST)
 		{
 			mTitle = "Latest Chatty";
-			if (isBeta)
-				mTitle = "Beta " + mVersion.replace("Beta","");
+			if (isBeta) {
+				mTitle = "Beta " + mVersion.replace("Beta", "");
+			}
 			fragment = _threadList;
 		}
 		if (type == CONTENT_MESSAGES)
@@ -1413,7 +1422,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		{
 			mTitle = "Search";
 			fragment = (SearchViewFragment)Fragment.instantiate(getApplicationContext(), SearchViewFragment.class.getName(), bundle);
-			}
+		}
 		if (type == CONTENT_FAVORITES)
 		{
 			mTitle = "Starred Posts";
@@ -1461,9 +1470,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         while (toBeDeleted != null)
         {
             System.out.println("DELETING A FRAG");
-            fragmentManager.beginTransaction()
-                    .remove(toBeDeleted)
-                    .commit();
+            fragmentManager.beginTransaction().remove(toBeDeleted).commit();
             fragmentManager.executePendingTransactions();
             toBeDeleted = (Fragment) getFragmentManager().findFragmentById(R.id.content_frame);
         }

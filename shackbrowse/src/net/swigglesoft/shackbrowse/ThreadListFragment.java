@@ -269,8 +269,9 @@ public class ThreadListFragment extends ListFragment
        	{
        		_listState = savedInstanceState.getParcelable("tlist_listState");
        		_listPosition = savedInstanceState.getInt("tlist_listPosition");
-       		if ((_viewAvailable) && (_listState != null))
-       			getListView().onRestoreInstanceState(_listState);
+       		if ((_viewAvailable) && (_listState != null)) {
+				getListView().onRestoreInstanceState(_listState);
+			}
        		
        		if (savedInstanceState.getParcelableArrayList("tlist_adapterItems") != null)
        		{
@@ -287,23 +288,27 @@ public class ThreadListFragment extends ListFragment
        		}
        		_itemPosition = savedInstanceState.getInt("tlist_itemPosition");
        		
-       		if (_viewAvailable)
-       			getListView().setSelectionFromTop(_listPosition,  _itemPosition);
+       		if (_viewAvailable) {
+				getListView().setSelectionFromTop(_listPosition, _itemPosition);
+			}
        		       		
        		_itemChecked = savedInstanceState.getInt("tlist_itemChecked");
        		
-       		if ((_itemChecked != ListView.INVALID_POSITION) && (_viewAvailable))
-       			getListView().setItemChecked(_itemChecked, true);       		
+       		if ((_itemChecked != ListView.INVALID_POSITION) && (_viewAvailable)) {
+				getListView().setItemChecked(_itemChecked, true);
+			}
        	}
        	else
        	{
        		// user rotated the screen, try to go back to where they where
-       		if (_listState != null)
-       			getListView().onRestoreInstanceState(_listState);
-       		    getListView().setSelectionFromTop(_listPosition,  _itemPosition);
+       		if (_listState != null) {
+				getListView().onRestoreInstanceState(_listState);
+			}
+			getListView().setSelectionFromTop(_listPosition,  _itemPosition);
        		
-       		if (_itemChecked != ListView.INVALID_POSITION)
-       			getListView().setItemChecked(_itemChecked, true);
+       		if (_itemChecked != ListView.INVALID_POSITION) {
+				getListView().setItemChecked(_itemChecked, true);
+			}
        	}
        	
        	
@@ -326,8 +331,9 @@ public class ThreadListFragment extends ListFragment
        	
        	// this will also fix the ontouchlistener which was setup by the PTR
        	initAutoLoader();
-       	if (savedInstanceState == null)
-       		showLoadingView();
+       	if (savedInstanceState == null) {
+			showLoadingView();
+		}
 
 	    _lastResumeTimeAndPrompt = System.currentTimeMillis();
     }
@@ -350,8 +356,7 @@ public class ThreadListFragment extends ListFragment
 	    	outState.putInt("tlist_itemPosition", _itemPosition);
 	    	outState.putInt("tlist_itemChecked", _itemChecked);
 	    	
-	    	if (_adapter != null)
-	    	{
+	    	if (_adapter != null) {
 		    	outState.putParcelableArrayList("tlist_adapterItems", _adapter._itemList);
 		    	outState.putInt("tlist_adapterPage", _adapter._pageNumber);
 		    	outState.putIntegerArrayList("tlist_threadIds", _adapter._threadIds);
@@ -371,8 +376,9 @@ public class ThreadListFragment extends ListFragment
 
                 act.showLoadingSplash();
 				
-				if ((_adapter != null) && (!_adapter.isAsyncTaskLoading()) && (!_nextBackQuitsBecauseOpenedAppViaIntent))
+				if ((_adapter != null) && (!_adapter.isAsyncTaskLoading()) && (!_nextBackQuitsBecauseOpenedAppViaIntent)) {
 					_adapter.triggerLoadMore();
+				}
     		}
     	}
     }
@@ -381,23 +387,22 @@ public class ThreadListFragment extends ListFragment
 	public void initAutoLoader ()
     {        
     	_offlineThread = ((MainActivity)getActivity()).mOffline;
-    	
-    	_touchListener =
-                new SwipeDismissListViewTouchListener(
-                        getListView(),
-                        new DismissCallbacks() {
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                    collapseAtPosition(position);
-                                }
-                                _adapter.notifyDataSetChanged();
-                            }
 
-							@Override
-							public boolean canDismiss(int position) {
-								return true;
-							}
-                        });
+		DismissCallbacks dcb = new DismissCallbacks() {
+			public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+				for (int position : reverseSortedPositions) {
+					collapseAtPosition(position);
+				}
+				_adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public boolean canDismiss(int position) {
+				return true;
+			}
+		};
+    	
+    	_touchListener = new SwipeDismissListViewTouchListener(getListView(), dcb);
 
         getListView().setOnTouchListener(new View.OnTouchListener() {
 			@Override

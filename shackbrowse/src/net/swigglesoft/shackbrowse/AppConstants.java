@@ -8,13 +8,7 @@ public class AppConstants
     public static final String SHACKNEWS_URL_CORTEX = SHACKNEWS_URL + "/cortex/";
     public static String SHACKNEWS_CHATTY_URL = SHACKNEWS_URL + "/chatty";
 
-    static final String URL_LOGIN = SHACKNEWS_URL + "/account/signin";
-    static final String URL_CHECKUSEREXISTS = SHACKNEWS_URL + "/account/username_exists";
-    static final String URL_MODERATION = SHACKNEWS_URL + "/mod_chatty.x";
-    static final String URL_CREATEPOST = SHACKNEWS_URL + "/api/chat/create/17.json";
-    static final String URL_TAGHANDLING = SHACKNEWS_URL + "/api2/api-index.php";
-    static final String URL_SHACKMSGPOST = SHACKNEWS_URL + "/messages/send";
-    static final String URL_SHACKMSGREAD = SHACKNEWS_URL + "/messages/read";
+    static final int POST_MAX_CHARLENGTH = 4900;
 
     static final String POST_TAG_CORTEX = "cortex";
     static final String POST_TAG_INFORMATIVE = "informative";
@@ -23,7 +17,16 @@ public class AppConstants
     static final String POST_TAG_STUPID = "stupid";
     static final String POST_TAG_TANGENT = "tangent";
 
-    static final int POST_MAX_CHARLENGTH = 4900;
+    static final String URL_LOGIN = SHACKNEWS_URL + "/account/signin";
+    static final String URL_CHECKUSEREXISTS = SHACKNEWS_URL + "/account/username_exists";
+    static final String URL_MODERATION = SHACKNEWS_URL + "/mod_chatty.x";
+    static final String URL_CREATEPOST = SHACKNEWS_URL + "/api/chat/create/17.json";
+    static final String URL_TAGHANDLING = SHACKNEWS_URL + "/api2/api-index.php";
+    static final String URL_SHACKMSGPOST = SHACKNEWS_URL + "/messages/send";
+    static final String URL_SHACKMSGREAD = SHACKNEWS_URL + "/messages/read";
+
+    static final int USERTYPE_EMPLOYEE = 2;
+    static final int USERTYPE_MODERATOR = 1;
 
 
     // no longer used

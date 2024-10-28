@@ -312,30 +312,32 @@ public class Post implements Comparable<Post> {
     {
     	_lolobj = obj;
     }
+
     // this stuff is a mild optimization. setusertype runs at load so we dont have to do this check on scrolling
     public void setUserType()
     {
-    	if (User.isEmployee(getUserName()))
-    		_userType = 2;
-    	if (User.isModerator(getUserName()))
-        	_userType = 1;
+    	if (User.isEmployee(getUserName())) {
+            _userType = AppConstants.USERTYPE_EMPLOYEE;
+        }
+    	else if (User.isModerator(getUserName())) {
+            _userType = AppConstants.USERTYPE_MODERATOR;
+        }
     }
+
     public boolean isFromModerator()
     {
-    	if (_userType == 1)
-    		return true;
-    	return false;
+    	return _userType == AppConstants.USERTYPE_MODERATOR);
     }
+
     public boolean isFromEmployee()
     {
-    	if (_userType == 2)
-    		return true;
-    	return false;
+    	return _userType == AppConstants.USERTYPE_EMPLOYEE;
     }
-    
+
     @Override
-    public int compareTo(Post post) {
-        return _postId > post.getPostId() ? 1 : _postId < post.getPostId() ? -1 : 0;
+    public int compareTo(Post post)
+    {
+        return _postId > post.getPostId() ? 1 : (_postId < post.getPostId() ? -1 : 0);
     }
 	public void setIsPQP(boolean isPQP) {
 		_isPQP = isPQP;

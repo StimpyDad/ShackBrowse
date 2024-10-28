@@ -170,20 +170,20 @@ public class ShackApi
     
     static int getModTypeId(String moderation) throws Exception
     {
-        if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_INTERESTING))
-            return AppConstants.POST_TAG_INTERESTING_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_NWS))
-            return AppConstants.POST_TAG_NWS_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_STUPID))
-            return AppConstants.POST_TAG_STUPID_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_TANGENT))
-            return AppConstants.POST_TAG_TANGENT_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_ONTOPIC))
-            return AppConstants.POST_TAG_ONTOPIC_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_NUKED))
-            return AppConstants.POST_TAG_NUKED_ID;
-        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_POLITICAL))
-            return AppConstants.POST_TAG_POLITICAL_ID;
+        if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_INTERESTING))
+            return AppConstants.POST_TYPE_INTERESTING_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_NWS))
+            return AppConstants.POST_TYPE_NWS_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_STUPID))
+            return AppConstants.POST_TYPE_STUPID_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_TANGENT))
+            return AppConstants.POST_TYPE_TANGENT_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_ONTOPIC))
+            return AppConstants.POST_TYPE_ONTOPIC_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_NUKED))
+            return AppConstants.POST_TYPE_NUKED_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TYPE_POLITICAL))
+            return AppConstants.POST_TYPE_POLITICAL_ID;
         
         throw new Exception("Invalid mod type: " + moderation);
     }
@@ -389,28 +389,28 @@ public class ShackApi
         {
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 	        if (prefs.getBoolean("showInformative", true))
-                visible_categories.add(AppConstants.POST_TAG_INFORMATIVE);
+                visible_categories.add(AppConstants.POST_TYPE_INFORMATIVE);
             if (prefs.getBoolean("showTangent", true))
-                visible_categories.add(AppConstants.POST_TAG_OFFTOPIC);
+                visible_categories.add(AppConstants.POST_TYPE_OFFTOPIC);
             if (prefs.getBoolean("showStupid", true))
-                visible_categories.add(AppConstants.POST_TAG_STUPID);
+                visible_categories.add(AppConstants.POST_TYPE_STUPID);
             if (prefs.getBoolean("showPolitical", false))
-                visible_categories.add(AppConstants.POST_TAG_POLITICAL);
+                visible_categories.add(AppConstants.POST_TYPE_POLITICAL);
             if (prefs.getBoolean("showOntopic", true))
-                visible_categories.add(AppConstants.POST_TAG_ONTOPIC);
+                visible_categories.add(AppConstants.POST_TYPE_ONTOPIC);
             if (prefs.getBoolean("showNWS", false))
-                visible_categories.add(AppConstants.POST_TAG_NWS);
+                visible_categories.add(AppConstants.POST_TYPE_NWS);
             if (prefs.getBoolean("showCortex", true))
-                visible_categories.add(AppConstants.POST_TAG_CORTEX);
+                visible_categories.add(AppConstants.POST_TYPE_CORTEX);
         }
         else
         {
-            visible_categories.add(AppConstants.POST_TAG_INFORMATIVE);
-            visible_categories.add(AppConstants.POST_TAG_OFFTOPIC);
-            visible_categories.add(AppConstants.POST_TAG_STUPID);
-            visible_categories.add(AppConstants.POST_TAG_POLITICAL);
-            visible_categories.add(AppConstants.POST_TAG_ONTOPIC);
-            visible_categories.add(AppConstants.POST_TAG_CORTEX);
+            visible_categories.add(AppConstants.POST_TYPE_INFORMATIVE);
+            visible_categories.add(AppConstants.POST_TYPE_OFFTOPIC);
+            visible_categories.add(AppConstants.POST_TYPE_STUPID);
+            visible_categories.add(AppConstants.POST_TYPE_POLITICAL);
+            visible_categories.add(AppConstants.POST_TYPE_ONTOPIC);
+            visible_categories.add(AppConstants.POST_TYPE_CORTEX);
         }
 
         // winchatty uses "rootPosts" instead of "comments"
@@ -424,8 +424,8 @@ public class ShackApi
 
             String category = comment.getString("category");
             // winchatty v2 renames "offtopic" to "tangent" for some reason
-            if (category.equalsIgnoreCase(AppConstants.POST_TAG_TANGENT)) {
-                category = AppConstants.POST_TAG_OFFTOPIC;
+            if (category.equalsIgnoreCase(AppConstants.POST_TYPE_TANGENT)) {
+                category = AppConstants.POST_TYPE_OFFTOPIC;
             }
             
             int id = comment.getInt("id");
@@ -604,8 +604,9 @@ public class ShackApi
 
                     boolean seen = true;
                     // check if post is newer than last seen time
-                    if ((int)(dateTime / 1000) > epochSecs)
+                    if ((int)(dateTime / 1000) > epochSecs) {
                         seen = false;
+                    }
 
                     Post post = new Post(postId, userName, body, dateTime, depth, category, false, seen, false);
 

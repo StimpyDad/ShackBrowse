@@ -9,19 +9,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Random;
 
 import net.swigglesoft.AutocompleteProvider;
 import net.swigglesoft.CheckableLinearLayout;
@@ -43,7 +39,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -52,7 +47,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
-import androidx.annotation.NonNull;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -63,7 +58,6 @@ import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -82,7 +76,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import static net.swigglesoft.shackbrowse.ShackApi.POST_EXPIRY_HOURS;
@@ -1427,37 +1420,37 @@ public class ThreadListFragment extends ListFragment
 	            {
 	            	holder.container.setNWS(true);
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_nws));
-	                holder.moderation.setText(AppConstants.POST_TAG_NWS);
+	                holder.moderation.setText(AppConstants.POST_TYPE_NWS);
 	            }
 	            else if (t.getModeration().equalsIgnoreCase("offtopic"))
 	            {
 	            	holder.container.setTangent(true);
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_tangent));
-	                holder.moderation.setText(AppConstants.POST_TAG_TANGENT);
+	                holder.moderation.setText(AppConstants.POST_TYPE_TANGENT);
 	            }
 	            else if (t.getModeration().equalsIgnoreCase("informative"))
 	            {
 	            	holder.container.setInf(true);
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_inf));
-	                holder.moderation.setText(AppConstants.POST_TAG_INFORMATIVE);
+	                holder.moderation.setText(AppConstants.POST_TYPE_INFORMATIVE);
 	            }
 	            else if (t.getModeration().equalsIgnoreCase("stupid"))
 	            {
 	            	holder.container.setStupid(true);
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_stupid));
-	                holder.moderation.setText(AppConstants.POST_TAG_STUPID);
+	                holder.moderation.setText(AppConstants.POST_TYPE_STUPID);
 	            }
 	            else if (t.getModeration().equalsIgnoreCase("political"))
 	            {
 	            	holder.container.setPolitical(true);
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_political));
-	                holder.moderation.setText(AppConstants.POST_TAG_POLITICAL);
+	                holder.moderation.setText(AppConstants.POST_TYPE_POLITICAL);
 	            }
 				else if (t.getModeration().equalsIgnoreCase("cortex"))
 				{
 					holder.container.setNWS(true);
 					holder.moderation.setTextColor(getResources().getColor(R.color.modtag_inf));
-					holder.moderation.setText(AppConstants.POST_TAG_CORTEX);
+					holder.moderation.setText(AppConstants.POST_TYPE_CORTEX);
 				}
 	            else
 	            {

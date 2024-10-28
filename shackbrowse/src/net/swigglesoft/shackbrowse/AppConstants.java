@@ -13,9 +13,11 @@ public class AppConstants
     static final String POST_TAG_CORTEX = "cortex";
     static final String POST_TAG_INFORMATIVE = "informative";
     static final String POST_TAG_NWS = "nws";
+    static final String POST_TAG_OFFTOPIC = "offtopic"; // offtopic and tangent are same category
+    static final String POST_TAG_ONTOPIC = "ontopic";
     static final String POST_TAG_POLITICAL = "political";
     static final String POST_TAG_STUPID = "stupid";
-    static final String POST_TAG_TANGENT = "tangent";
+    static final String POST_TAG_TANGENT = "tangent"; // tangent and offtopic are same category
 
     static final String URL_LOGIN = SHACKNEWS_URL + "/account/signin";
     static final String URL_CHECKUSEREXISTS = SHACKNEWS_URL + "/account/username_exists";

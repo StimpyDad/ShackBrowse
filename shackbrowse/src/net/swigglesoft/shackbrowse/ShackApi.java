@@ -389,28 +389,28 @@ public class ShackApi
         {
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 	        if (prefs.getBoolean("showInformative", true))
-                visible_categories.add("informative");
+                visible_categories.add(AppConstants.POST_TAG_INFORMATIVE);
             if (prefs.getBoolean("showTangent", true))
-                visible_categories.add("offtopic");
+                visible_categories.add(AppConstants.POST_TAG_OFFTOPIC);
             if (prefs.getBoolean("showStupid", true))
-                visible_categories.add("stupid");
+                visible_categories.add(AppConstants.POST_TAG_STUPID);
             if (prefs.getBoolean("showPolitical", false))
-                visible_categories.add("political");
+                visible_categories.add(AppConstants.POST_TAG_POLITICAL);
             if (prefs.getBoolean("showOntopic", true))
-                visible_categories.add("ontopic");
+                visible_categories.add(AppConstants.POST_TAG_ONTOPIC);
             if (prefs.getBoolean("showNWS", false))
-                visible_categories.add("nws");
+                visible_categories.add(AppConstants.POST_TAG_NWS);
             if (prefs.getBoolean("showCortex", true))
-                visible_categories.add("cortex");
+                visible_categories.add(AppConstants.POST_TAG_CORTEX);
         }
         else
         {
-            visible_categories.add("informative");
-            visible_categories.add("offtopic");
-            visible_categories.add("stupid");
-            visible_categories.add("political");
-            visible_categories.add("ontopic");
-            visible_categories.add("cortex");
+            visible_categories.add(AppConstants.POST_TAG_INFORMATIVE);
+            visible_categories.add(AppConstants.POST_TAG_OFFTOPIC);
+            visible_categories.add(AppConstants.POST_TAG_STUPID);
+            visible_categories.add(AppConstants.POST_TAG_POLITICAL);
+            visible_categories.add(AppConstants.POST_TAG_ONTOPIC);
+            visible_categories.add(AppConstants.POST_TAG_CORTEX);
         }
 
         // winchatty uses "rootPosts" instead of "comments"
@@ -423,11 +423,10 @@ public class ShackApi
             JSONObject comment = comments.getJSONObject(i);
 
             String category = comment.getString("category");
-            
-
             // winchatty v2 renames "offtopic" to "tangent" for some reason
-            if (category.equalsIgnoreCase("tangent"))
-            	category = "offtopic";
+            if (category.equalsIgnoreCase(AppConstants.POST_TAG_TANGENT)) {
+                category = AppConstants.POST_TAG_OFFTOPIC;
+            }
             
             int id = comment.getInt("id");
             

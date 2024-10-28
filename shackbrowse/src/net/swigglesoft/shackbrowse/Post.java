@@ -326,7 +326,7 @@ public class Post implements Comparable<Post> {
 
     public boolean isFromModerator()
     {
-    	return _userType == AppConstants.USERTYPE_MODERATOR);
+    	return _userType == AppConstants.USERTYPE_MODERATOR;
     }
 
     public boolean isFromEmployee()

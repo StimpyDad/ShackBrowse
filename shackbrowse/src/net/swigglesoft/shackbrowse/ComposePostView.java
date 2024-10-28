@@ -151,7 +151,7 @@ public class ComposePostView extends AppCompatActivity {
         
         _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
 
-        _extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
+		_extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
 
 		_contentTypeId = Integer.parseInt(ShackApi.FAKE_STORY_ID);
         // grab the post being replied to, if this is a reply
@@ -1404,7 +1404,7 @@ public class ComposePostView extends AppCompatActivity {
 			});
 			builder.create().show();
 		}
-	    else if ((content.length() > 4900) && (_replyToPostId != 0) && (!_messageMode))
+	    else if ((content.length() > AppConstants.POST_MAX_CHARLENGTH) && (_replyToPostId != 0) && (!_messageMode))
 		{
 			final String fincontent = content;
 			AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
@@ -2041,17 +2041,17 @@ public class ComposePostView extends AppCompatActivity {
 	    	{
 	    		menu.findItem(R.id.menu_compMarkup).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 			    menu.findItem(R.id.menu_compMacro).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-	    		if (menu.findItem(android.R.id.selectAll) != null)
-	    			menu.findItem(android.R.id.selectAll).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-
+	    		if (menu.findItem(android.R.id.selectAll) != null) {
+					menu.findItem(android.R.id.selectAll).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+				}
 	    	}
 	    	else
 	    	{
 	    		menu.findItem(R.id.menu_compMarkup).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			    menu.findItem(R.id.menu_compMacro).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-	    		if (menu.findItem(android.R.id.selectAll) != null)
-	    			menu.findItem(android.R.id.selectAll).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+	    		if (menu.findItem(android.R.id.selectAll) != null) {
+					menu.findItem(android.R.id.selectAll).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+				}
 	    	}
 	        
 	    	return false;

@@ -810,9 +810,10 @@ public class ThreadViewFragment extends ListFragment
 		}
 		else if (_messageId == 0)
 		{
-			boolean isNewsItem = _adapter.getItem(0).getUserName().equalsIgnoreCase("shacknews");
-			boolean isCortex = (_adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"https://www.shacknews.com/cortex/") || _adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"/cortex/"));
-			mMainActivity.openComposerForReply(POST_REPLY, parentPost, Integer.parseInt(isNewsItem ? ShackApi.FAKE_NEWS_ID : (isCortex ? ShackApi.FAKE_CORTEX_ID : ShackApi.FAKE_STORY_ID)));
+			boolean isNewsItem = _adapter.getItem(0).getUserName().equalsIgnoreCase(AppConstants.SHACKNEWS_AUTHOR );
+			boolean isCortex = (_adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"" + AppConstants.SHACKNEWS_URL_CORTEX) || _adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"/cortex/"));
+			mMainActivity.openComposerForReply(POST_REPLY, parentPost,
+					Integer.parseInt(isNewsItem ? ShackApi.FAKE_NEWS_ID : (isCortex ? ShackApi.FAKE_CORTEX_ID : ShackApi.FAKE_STORY_ID)));
 		}
 		else if (_rootPostId == 0)
 		{
@@ -873,7 +874,7 @@ public class ThreadViewFragment extends ListFragment
 		String content = String.format(
 				res.getString(R.string.moderation_report),
 				username,
-				"https://www.shacknews.com/chatty?id=" + postId + System.lineSeparator()
+				AppConstants.SHACKNEWS_CHATTY_URL + "?id=" + postId + System.lineSeparator()
 		);
 		mMainActivity.openNewMessageForReportingPost(
 				res.getString(R.string.moderation_report_to),

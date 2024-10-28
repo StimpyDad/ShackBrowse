@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import android.util.Log;
 
 public final class TimeDisplay {
+
 	static String convTime(Long original, String format)
     {
         try
@@ -25,6 +26,7 @@ public final class TimeDisplay {
         
         return "Time Error";
     }
+
 	static String convertTime(Long original)
 	{
 		return convTime(original, "E h:mma");

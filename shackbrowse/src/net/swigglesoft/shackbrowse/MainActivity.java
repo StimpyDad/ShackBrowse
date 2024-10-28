@@ -1475,11 +1475,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                     .hide(_articleViewer)
                     .commit();
 
-            _fpBrowser.setFirstOpen("https://www.shacknews.com/");
+            _fpBrowser.setFirstOpen(AppConstants.SHACKNEWS_URL + "/");
         }
 		if (type == CONTENT_LOLPAGE)
 		{
-			_lolBrowser.setFirstOpen("https://www.shacknews.com/tags-home");
+			_lolBrowser.setFirstOpen(AppConstants.SHACKNEWS_URL + "/tags-home");
 		}
 
         fragmentManager.beginTransaction()

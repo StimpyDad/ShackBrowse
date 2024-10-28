@@ -390,8 +390,10 @@ public class DonateActivity extends AppCompatActivity {
     
     
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case android.R.id.home:
                 Intent upIntent = new Intent(this, MainActivity.class);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
@@ -408,6 +410,6 @@ public class DonateActivity extends AppCompatActivity {
                 }
                 return true;
         }
-		return false;
+        return false;
     }
 }

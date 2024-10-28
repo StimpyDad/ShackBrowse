@@ -53,7 +53,7 @@ public class PostFormatter {
             content = content.replaceAll("&lt;(/?)span(.*?)&gt;", "<$1span$2>");
             
             // make relative link absolute
-            content = content.replaceAll("href=\"/", "href=\"http://www.shacknews.com/");
+            content = content.replaceAll("href=\"/", "href=\"" + AppConstants.SHACKNEWS_URL + "/");
         }
         
         return ShackTags.fromHtml(content, view, !multiLine, showTags);

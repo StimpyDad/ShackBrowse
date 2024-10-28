@@ -531,8 +531,9 @@ public class ComposePostView extends AppCompatActivity {
 	public void setupButtonBindings(Bundle extras)
 	{
 		mAnonMode = _prefs.getBoolean("donkeyanonoption", false);
-		if (extras == null)
+		if (extras == null) {
 			extras = new Bundle();
+		}
         
         if ((_replyToPostId == 0) && (!_messageMode))
         {

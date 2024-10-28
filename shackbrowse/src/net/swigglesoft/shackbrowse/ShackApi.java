@@ -170,20 +170,20 @@ public class ShackApi
     
     static int getModTypeId(String moderation) throws Exception
     {
-        if (moderation.equalsIgnoreCase("interesting"))
-            return 1;
-        else if (moderation.equalsIgnoreCase("nws"))
-            return 2;
-        else if (moderation.equalsIgnoreCase("stupid"))
-            return 3;
-        else if (moderation.equalsIgnoreCase("tangent"))
-            return 4;
-        else if (moderation.equalsIgnoreCase("ontopic"))
-            return 5;
-        else if (moderation.equalsIgnoreCase("nuked"))
-            return 8;
-        else if (moderation.equalsIgnoreCase("political"))
-            return 9;
+        if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_INTERESTING))
+            return AppConstants.POST_TAG_INTERESTING_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_NWS))
+            return AppConstants.POST_TAG_NWS_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_STUPID))
+            return AppConstants.POST_TAG_STUPID_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_TANGENT))
+            return AppConstants.POST_TAG_TANGENT_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_ONTOPIC))
+            return AppConstants.POST_TAG_ONTOPIC_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_NUKED))
+            return AppConstants.POST_TAG_NUKED_ID;
+        else if (moderation.equalsIgnoreCase(AppConstants.POST_TAG_POLITICAL))
+            return AppConstants.POST_TAG_POLITICAL_ID;
         
         throw new Exception("Invalid mod type: " + moderation);
     }

@@ -11,13 +11,24 @@ public class AppConstants
     static final int POST_MAX_CHARLENGTH = 4900;
 
     static final String POST_TAG_CORTEX = "cortex";
+    static final String POST_TAG_INTERESTING = "interesting";
+    static final int POST_TAG_INTERESTING_ID = 1;
     static final String POST_TAG_INFORMATIVE = "informative";
+    static final String POST_TAG_NUKED = "nuked";
+    static final int POST_TAG_NUKED_ID = 8;
     static final String POST_TAG_NWS = "nws";
+    static final int POST_TAG_NWS_ID = 2;
     static final String POST_TAG_OFFTOPIC = "offtopic"; // offtopic and tangent are same category
     static final String POST_TAG_ONTOPIC = "ontopic";
+    static final int POST_TAG_ONTOPIC_ID = 5;
     static final String POST_TAG_POLITICAL = "political";
+    static final int POST_TAG_POLITICAL_ID = 9;
     static final String POST_TAG_STUPID = "stupid";
+    static final int POST_TAG_STUPID_ID = 3;
     static final String POST_TAG_TANGENT = "tangent"; // tangent and offtopic are same category
+    static final int POST_TAG_TANGENT_ID = 4;
+
+
 
     static final String URL_LOGIN = SHACKNEWS_URL + "/account/signin";
     static final String URL_CHECKUSEREXISTS = SHACKNEWS_URL + "/account/username_exists";

@@ -669,40 +669,40 @@ public class AppMenu extends ListFragment
 			args = new Bundle();
 			args.putString("userNameField", "author");
 			args.putString("author", "");
-			args.putString("tag", "lol");
+			args.putString("tag", AppConstants.TAG_TYPE_LOL);
 			args.putInt("days", 365);
 			_adapter.add(new MenuItems(new PremadeSearch("My Posts Which Were LOL'd", 1, args, true)));
 
-
 			args = new Bundle();
-			args.putString("tag", "lol");
+			args.putString("tag", AppConstants.TAG_TYPE_LOL);
 			args.putInt("days", 1);
 			_adapter.add(new MenuItems(new PremadeSearch("Top LOLs Today", 1, args, false)));
 
-
 			args = new Bundle();
-			args.putString("tag", "lol");
+			args.putString("tag", AppConstants.TAG_TYPE_LOL);
 			args.putInt("days", 30);
 			_adapter.add(new MenuItems(new PremadeSearch("Top LOLs This Month", 1, args, false)));
 
 			args = new Bundle();
 			args.putString("userNameField", "tagger");
 			args.putString("tagger", "");
-			args.putString("tag", "lol");
+			args.putString("tag", AppConstants.TAG_TYPE_LOL);
 			args.putInt("days", 365);
 			_adapter.add(new MenuItems(new PremadeSearch("Posts I LOL'd", 1, args, true)));
 
 			args = new Bundle();
 			args.putString("userNameField", "tagger");
 			args.putString("tagger", "");
-			args.putString("tag", "tag");
+			args.putString("tag", AppConstants.TAG_TYPE_TAG);
 			args.putInt("days", 365);
 			_adapter.add(new MenuItems(new PremadeSearch("Posts I TAG'd", 1, args, true)));
 		}
 		args = new Bundle();
-		args.putString("author", "Shacknews");
+		args.putString("author", AppConstants.SHACKNEWS_AUTHOR);
 		_adapter.add(new MenuItems(new PremadeSearch("News Posts", 0, args, false)));
-		
+
+
+
 		args = new Bundle();
 		args.putString("terms", "*");
 		args.putString("category", "informative");

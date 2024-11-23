@@ -74,10 +74,16 @@ public class ShackApi
 
     static final String LOL_CACHE_FILE = "shacklol.cache";
 
-    // {"status":"1","data":[{"tag_id":"1","tag":"lol","color":"#FF8800"},{"tag_id":"4","tag":"inf","color":"#0099CC"},{"tag_id":"3","tag":"unf","color":"#FF0000"},{"tag_id":"5","tag":"tag","color":"#77BB22"},{"tag_id":"2","tag":"wtf","color":"#C000C0"},{"tag_id":"6","tag":"wow","color":"#C4A3B3"},{"tag_id":"7","tag":"aww","color":"#13A4A7"}],"message":""}
-    // the following array converts numbers to string text
-    static final String[] SN_LOL_TAG_TYPE = { "zero", "lol" , "wtf", "unf", "inf", "tag", "wow", "aww" };
-
+    /* {"status":"1","data":[
+            {"tag_id":"1","tag":"lol","color":"#FF8800"},
+            {"tag_id":"4","tag":"inf","color":"#0099CC"},
+            {"tag_id":"3","tag":"unf","color":"#FF0000"},
+            {"tag_id":"5","tag":"tag","color":"#77BB22"},
+            {"tag_id":"2","tag":"wtf","color":"#C000C0"},
+            {"tag_id":"6","tag":"wow","color":"#C4A3B3"},
+            {"tag_id":"7","tag":"aww","color":"#13A4A7"}
+       ],"message":""}
+    */
     static final String GET_LOL_URL = "http://lmnopc.com/greasemonkey/shacklol/api.php";
     
     static final String PUSHSERV_URL = "http://shackbrowsepublic.appspot.com/";
@@ -1078,8 +1084,7 @@ public class ShackApi
     {
     	HashMap<String, HashMap<String, LolObj>> map = new HashMap<String, HashMap<String,LolObj>>();
         JSONArray threads = json.names();
-        
-        
+
         int lolCount = 0;
         int tagCount = 0;
         int infCount = 0;
@@ -1094,9 +1099,7 @@ public class ShackApi
 	        {
 	        	JSONObject thisThread = json.getJSONObject(threads.getString(i));
 	        	JSONArray posts = thisThread.names();
-	        	
-	        	
-	        	
+
 	        	map.put(threads.getString(i), new HashMap<String, LolObj>());
 	        	
 	        	lolCount = 0;
@@ -1109,16 +1112,45 @@ public class ShackApi
 	        	
 	        	for (int j = 0; j <  posts.length(); j++)
 	            {
+                    lolobj = new LolObj();
 	        		JSONObject thisPost = thisThread.getJSONObject(posts.getString(j));
-	        		lolobj = new LolObj();
-	        		if (thisPost.has("lol")) { lolobj.setLol(tryParseInt(thisPost.getString("lol"))); lolCount = lolCount + tryParseInt(thisPost.getString("lol")); }
-	        		if (thisPost.has("inf")) { lolobj.setInf(tryParseInt(thisPost.getString("inf"))); infCount = infCount + tryParseInt(thisPost.getString("inf")); }
-	        		if (thisPost.has("unf")) { lolobj.setUnf(tryParseInt(thisPost.getString("unf"))); unfCount = unfCount + tryParseInt(thisPost.getString("unf")); }
-	        		if (thisPost.has("tag")) { lolobj.setTag(tryParseInt(thisPost.getString("tag"))); tagCount = tagCount + tryParseInt(thisPost.getString("tag")); }
-	        		if (thisPost.has("wtf")) { lolobj.setWtf(tryParseInt(thisPost.getString("wtf"))); wtfCount = wtfCount + tryParseInt(thisPost.getString("wtf")); }
-                    if (thisPost.has("wow")) { lolobj.setWow(tryParseInt(thisPost.getString("wow"))); wowCount = wowCount + tryParseInt(thisPost.getString("wow")); }
-                    if (thisPost.has("aww")) { lolobj.setAww(tryParseInt(thisPost.getString("aww"))); awwCount = awwCount + tryParseInt(thisPost.getString("aww")); }
-	        		lolobj.genTagSpan(context);
+
+                    if (thisPost.has(AppConstants.TAG_TYPE_LOL)) {
+                        lolobj.setLol(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_LOL)));
+                        lolCount = lolCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_LOL));
+                    }
+
+	        		if (thisPost.has(AppConstants.TAG_TYPE_INF)){
+                        lolobj.setInf(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_INF)));
+                        infCount = infCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_INF));
+                    }
+
+	        		if (thisPost.has(AppConstants.TAG_TYPE_UNF)) {
+                        lolobj.setUnf(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_UNF)));
+                        unfCount = unfCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_UNF));
+                    }
+
+	        		if (thisPost.has(AppConstants.TAG_TYPE_TAG)) {
+                        lolobj.setTag(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_TAG)));
+                        tagCount = tagCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_TAG));
+                    }
+
+	        		if (thisPost.has(AppConstants.TAG_TYPE_WTF)) {
+                        lolobj.setWtf(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_WTF)));
+                        wtfCount = wtfCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_WTF));
+                    }
+
+                    if (thisPost.has(AppConstants.TAG_TYPE_WOW)) {
+                        lolobj.setWow(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_WOW)));
+                        wowCount = wowCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_WOW));
+                    }
+
+                    if (thisPost.has(AppConstants.TAG_TYPE_AWW)) {
+                        lolobj.setAww(tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_AWW)));
+                        awwCount = awwCount + tryParseInt(thisPost.getString(AppConstants.TAG_TYPE_AWW));
+                    }
+
+                    lolobj.genTagSpan(context);
 	        		map.get(threads.getString(i)).put(posts.getString(j), lolobj);
 	            }
 	        	
@@ -1132,13 +1164,11 @@ public class ShackApi
                 lolobj.setAww(awwCount);
 	        	lolobj.genTagSpan(context);
 	        	map.get(threads.getString(i)).put("totalLols", lolobj);
-	        	
 	        }
 	        return map;
         }
-        else
-        	return new HashMap<String, HashMap<String,LolObj>>();
-        
+
+        return new HashMap<String, HashMap<String, LolObj>>();
     }
     
     // saved threads
@@ -1270,29 +1300,35 @@ public class ShackApi
             return results;
         }
     }
+
     // SHACKLOL SEARCH
     public static ArrayList<SearchResult> searchLOL(String tag, int days, String author, String tagger, int pageNumber) throws Exception
     {
-    	
     	Date date = new Date();
     	Calendar cal = Calendar.getInstance();
     	cal.setTime(date);
     	cal.add(Calendar.DAY_OF_YEAR, - days);
     	date = cal.getTime();
     	
-    	if (tag.equalsIgnoreCase("all"))
-    		tag = "";
-    	else tag = "&tag=" + URLEncoder.encode(tag, "UTF8");
+    	if (tag.equalsIgnoreCase("all")) {
+            tag = "";
+        }
+    	else {
+            tag = "&tag=" + URLEncoder.encode(tag, "UTF8");
+        }
     	
-    	if (author.length() > 0)
-    		author = "&author=" + URLEncoder.encode(author, "UTF8");
+    	if (author.length() > 0) {
+            author = "&author=" + URLEncoder.encode(author, "UTF8");
+        }
     	
-    	if (tagger.length() > 0)
-    		tagger = "&tagger=" + URLEncoder.encode(tagger, "UTF8");
+    	if (tagger.length() > 0) {
+            tagger = "&tagger=" + URLEncoder.encode(tagger, "UTF8");
+        }
     	
     	String order= "";
-		if (tagger.length() > 0 || author.length() > 0)
-    		order = "&order=date_desc";
+		if (tagger.length() > 0 || author.length() > 0) {
+            order = "&order=date_desc";
+        }
     		
     	SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy hh:mm Z");
     	String queryDate = sdf.format(date);
@@ -1313,22 +1349,24 @@ public class ShackApi
             String posted = comment.getString("date");
             
             int type = SearchResult.TYPE_SHACKSEARCHRESULT;
-            if (comment.getString("tag").equalsIgnoreCase("lol"))
-            	type = SearchResult.TYPE_LOL;
-            if (comment.getString("tag").equalsIgnoreCase("tag"))
-            	type = SearchResult.TYPE_TAG;
-            if (comment.getString("tag").equalsIgnoreCase("inf"))
-            	type = SearchResult.TYPE_INF;
-            if (comment.getString("tag").equalsIgnoreCase("unf"))
-            	type = SearchResult.TYPE_UNF;
-            if (comment.getString("tag").equalsIgnoreCase("wtf"))
-            	type = SearchResult.TYPE_WTF;
-            if (comment.getString("tag").equalsIgnoreCase("wow"))
-            	type = SearchResult.TYPE_WOW;
-            if (comment.getString("tag").equalsIgnoreCase("aww"))
-                type = SearchResult.TYPE_AWW;
-            	
-            
+            String commentTagType = comment.getString("tag").toLowerCase();
+            switch(commentTagType) {
+                case AppConstants.TAG_TYPE_LOL:
+                    type = AppConstants.TAG_TYPEID_LOL;
+                case AppConstants.TAG_TYPE_TAG:
+                    type = AppConstants.TAG_TYPEID_TAG;
+                case AppConstants.TAG_TYPE_INF:
+                    type = AppConstants.TAG_TYPEID_INF;
+                case AppConstants.TAG_TYPE_UNF:
+                    type = AppConstants.TAG_TYPEID_UNF;
+                case AppConstants.TAG_TYPE_WTF:
+                    type = AppConstants.TAG_TYPEID_WTF;
+                case AppConstants.TAG_TYPE_WOW:
+                    type = AppConstants.TAG_TYPEID_WOW;
+                case AppConstants.TAG_TYPE_AWW:
+                    type = AppConstants.TAG_TYPEID_AWW;
+            }
+
             // convert time to local timezone
             Long postedTime = convertTimeThom(posted);
             

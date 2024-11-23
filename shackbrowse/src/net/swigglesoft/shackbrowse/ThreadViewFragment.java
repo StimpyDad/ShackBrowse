@@ -597,13 +597,13 @@ public class ThreadViewFragment extends ListFragment
 			if (arr.size() > 0)
 			{
 				int color = 0;
-				if (type.equals("lol")) color = getResources().getColor(R.color.shacktag_lol);
-				if (type.equals("wtf")) color = getResources().getColor(R.color.shacktag_wtf);
-				if (type.equals("inf")) color = getResources().getColor(R.color.shacktag_inf);
-				if (type.equals("tag")) color = getResources().getColor(R.color.shacktag_tag);
-				if (type.equals("wow")) color = getResources().getColor(R.color.shacktag_wow);
-				if (type.equals("aww")) color = getResources().getColor(R.color.shacktag_aww);
-				if (type.equals("unf")) color = getResources().getColor(R.color.shacktag_unf);
+				if (type.equals(AppConstants.TAG_TYPE_LOL)) color = getResources().getColor(R.color.shacktag_lol);
+				if (type.equals(AppConstants.TAG_TYPE_WTF)) color = getResources().getColor(R.color.shacktag_wtf);
+				if (type.equals(AppConstants.TAG_TYPE_INF)) color = getResources().getColor(R.color.shacktag_inf);
+				if (type.equals(AppConstants.TAG_TYPE_TAG)) color = getResources().getColor(R.color.shacktag_tag);
+				if (type.equals(AppConstants.TAG_TYPE_WOW)) color = getResources().getColor(R.color.shacktag_wow);
+				if (type.equals(AppConstants.TAG_TYPE_AWW)) color = getResources().getColor(R.color.shacktag_aww);
+				if (type.equals(AppConstants.TAG_TYPE_UNF)) color = getResources().getColor(R.color.shacktag_unf);
 				SpannableString header = new SpannableString(type + "\'d" + "\n");
 				header.setSpan(new ForegroundColorSpan(color), 0, header.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 				header.setSpan(new RelativeSizeSpan(1.6f), 0, header.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -611,8 +611,9 @@ public class ThreadViewFragment extends ListFragment
 				java.util.Collections.sort(arr, Collator.getInstance());
 				ListIterator<String> iter = arr.listIterator();
 				String txt = "";
-				while (iter.hasNext())
+				while (iter.hasNext()) {
 					txt = txt + iter.next() + "\n";
+				}
 
 				SpannableString list = new SpannableString(txt);
 				list.setSpan(new ForegroundColorSpan(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername)), 0, txt.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -646,25 +647,25 @@ public class ThreadViewFragment extends ListFragment
 			ArrayList<String> resultswow = new ArrayList<String>();
 			ArrayList<String> resultsaww = new ArrayList<String>();
 			try {
-				resultslol = ShackApi.getLOLTaggers(parm, "lol");
-				resultsinf = ShackApi.getLOLTaggers(parm, "inf");
-				resultsunf = ShackApi.getLOLTaggers(parm, "unf");
-				resultstag = ShackApi.getLOLTaggers(parm, "tag");
-				resultswtf = ShackApi.getLOLTaggers(parm, "wtf");
-				resultswow = ShackApi.getLOLTaggers(parm, "wow");
-				resultsaww = ShackApi.getLOLTaggers(parm, "aww");
+				resultslol = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_LOL);
+				resultsinf = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_INF);
+				resultsunf = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_UNF);
+				resultstag = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_TAG);
+				resultswtf = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_WTF);
+				resultswow = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_WOW);
+				resultsaww = ShackApi.getLOLTaggers(parm, AppConstants.TAG_TYPE_AWW);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			CharSequence txt = TextUtils.concat(
-					arraylistFormatter("lol", resultslol),
-					arraylistFormatter("inf", resultsinf),
-					arraylistFormatter("unf", resultsunf),
-					arraylistFormatter("tag", resultstag),
-					arraylistFormatter("wtf", resultswtf),
-					arraylistFormatter("wow", resultswow),
-					arraylistFormatter("aww", resultsaww)
+					arraylistFormatter(AppConstants.TAG_TYPE_LOL, resultslol),
+					arraylistFormatter(AppConstants.TAG_TYPE_INF, resultsinf),
+					arraylistFormatter(AppConstants.TAG_TYPE_UNF, resultsunf),
+					arraylistFormatter(AppConstants.TAG_TYPE_TAG, resultstag),
+					arraylistFormatter(AppConstants.TAG_TYPE_WTF, resultswtf),
+					arraylistFormatter(AppConstants.TAG_TYPE_WOW, resultswow),
+					arraylistFormatter(AppConstants.TAG_TYPE_AWW, resultsaww)
 			);
 			return txt;
 		}
@@ -1011,23 +1012,23 @@ public class ThreadViewFragment extends ListFragment
 
 				if (response == 1)
 				{
-					if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaglol"); }
-					if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagtag"); }
-					if (tag.equalsIgnoreCase("wow")) { updLol.incWow(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwow"); }
-					if (tag.equalsIgnoreCase("aww")) { updLol.incAww(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagaww"); }
-					if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwtf"); }
-					if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaginf"); }
-					if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagunf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_LOL)) { updLol.incLol(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaglol"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_TAG)) { updLol.incTag(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagtag"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_WOW)) { updLol.incWow(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwow"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_AWW)) { updLol.incAww(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagaww"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_WTF)) { updLol.incWtf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwtf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_INF)) { updLol.incInf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaginf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_UNF)) { updLol.incUnf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagunf"); }
 				}
 				if (response == -1)
 				{
-					if (tag.equalsIgnoreCase("lol")) { updLol.decLol(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaglol"); }
-					if (tag.equalsIgnoreCase("tag")) { updLol.decTag(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagtag"); }
-					if (tag.equalsIgnoreCase("wow")) { updLol.decWow(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwow"); }
-					if (tag.equalsIgnoreCase("aww")) { updLol.decAww(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagaww"); }
-					if (tag.equalsIgnoreCase("wtf")) { updLol.decWtf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwtf"); }
-					if (tag.equalsIgnoreCase("inf")) { updLol.decInf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaginf"); }
-					if (tag.equalsIgnoreCase("unf")) { updLol.decUnf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagunf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_LOL)) { updLol.decLol(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaglol"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_TAG)) { updLol.decTag(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagtag"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_WOW)) { updLol.decWow(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwow"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_AWW)) { updLol.decAww(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagaww"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_WTF)) { updLol.decWtf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwtf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_INF)) { updLol.decInf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaginf"); }
+					if (tag.equalsIgnoreCase(AppConstants.TAG_TYPE_UNF)) { updLol.decUnf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagunf"); }
 				}
 
 				updLol.genTagSpan(mMainActivity);
@@ -1694,14 +1695,14 @@ public class ThreadViewFragment extends ListFragment
 					public void onClick(View v) {
 						PopupMenu lolpop = new PopupMenu(getContext(), btnlol);
 						lolpop.getMenu().add(Menu.NONE, 6, Menu.NONE, "Who Tagged?");
-						lolpop.getMenu().add(Menu.NONE, 0, Menu.NONE, "lol");
-						lolpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "inf");
-						lolpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "unf");
+						lolpop.getMenu().add(Menu.NONE, 0, Menu.NONE, AppConstants.TAG_TYPE_LOL);
+						lolpop.getMenu().add(Menu.NONE, 1, Menu.NONE, AppConstants.TAG_TYPE_INF);
+						lolpop.getMenu().add(Menu.NONE, 2, Menu.NONE, AppConstants.TAG_TYPE_UNF);
 						SubMenu sub = lolpop.getMenu().addSubMenu(Menu.NONE, 3, Menu.NONE, "More...");
-						sub.add(Menu.NONE, 4, Menu.NONE, "wow");
-						sub.add(Menu.NONE, 5, Menu.NONE, "wtf");
-						sub.add(Menu.NONE, 8, Menu.NONE, "tag");
-						sub.add(Menu.NONE, 7, Menu.NONE, "aww");
+						sub.add(Menu.NONE, 4, Menu.NONE, AppConstants.TAG_TYPE_WOW);
+						sub.add(Menu.NONE, 5, Menu.NONE, AppConstants.TAG_TYPE_WTF);
+						sub.add(Menu.NONE, 8, Menu.NONE, AppConstants.TAG_TYPE_TAG);
+						sub.add(Menu.NONE, 7, Menu.NONE, AppConstants.TAG_TYPE_AWW);
 						lolpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 							@Override
 							public boolean onMenuItemClick(MenuItem item) {
@@ -1824,84 +1825,6 @@ public class ThreadViewFragment extends ListFragment
 					@Override
 					public void onClick(View v) {
 						modChoose(pos);
-						/*
-						PopupMenu extpop = new PopupMenu(getContext(), btnothr);
-
-						SubMenu sub = extpop.getMenu().addSubMenu(Menu.NONE, 0, Menu.NONE, unamefinal + " Actions");
-						sub.add(Menu.NONE, 3, Menu.NONE, "Shack Message " + unamefinal);
-						sub.add(Menu.NONE, 4, Menu.NONE, "Search for posts by " + unamefinal);
-						sub.add(Menu.NONE, 16, Menu.NONE, "Highlight " + unamefinal + " in thread");
-						SubMenu sub2 = extpop.getMenu().addSubMenu(Menu.NONE, 1, Menu.NONE, "Share/Copy Post");
-						sub2.add(Menu.NONE, 5, Menu.NONE, "Copy Post Text");
-						if (_messageId == 0) {
-							// not a message
-							sub2.add(Menu.NONE, 6, Menu.NONE, "Copy URL of Post");
-							sub2.add(Menu.NONE, 7, Menu.NONE, "Share Link to Post");
-						}
-
-						SubMenu sub3 = extpop.getMenu().addSubMenu(Menu.NONE, 2, Menu.NONE, "LOLtag Post");
-						sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
-						sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
-						sub3.add(Menu.NONE, 10, Menu.NONE, "unf");
-						sub3.add(Menu.NONE, 11, Menu.NONE, "wow");
-						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
-						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
-						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
-
-						if ((_showModTools) && (_rootPostId != 0)) {
-							extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
-						}
-						extpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-							@Override
-							public boolean onMenuItemClick(MenuItem item) {
-								if (item.getItemId() <= 2)
-									return false;
-								switch (item.getItemId()) {
-
-
-									case 3:
-										shackmessageTo(unamefinal);
-										break;
-									case 4:
-										searchForPosts(unamefinal);
-										break;
-									case 5:
-										copyPostText(pos);
-										break;
-									case 6:
-										copyURL(pos);
-										break;
-									case 7:
-										shareURL(pos);
-										break;
-
-
-									case 8:
-									case 9:
-									case 10:
-									case 11:
-									case 12:
-									case 13:
-										lolPost((String) item.getTitle(), pos);
-										break;
-
-									case 14:
-										new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
-										break;
-
-
-									case 15:
-										modChoose(pos);
-										break;
-									case 16:
-										mMainActivity.openHighlighter(unamefinal);
-										break;
-								}
-								return true;
-							}
-						});
-						extpop.show();
-						*/
 					}
 				});
 

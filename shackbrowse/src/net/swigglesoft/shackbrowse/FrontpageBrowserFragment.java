@@ -214,11 +214,11 @@ public class FrontpageBrowserFragment extends Fragment {
                         System.out.println("open LINK" + _href);
                         Uri uri = Uri.parse(_href);
                         String id = uri.getQueryParameter("id");
-                        if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
+                        if ((uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST_WWW) || uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST)) && id != null) {
                             System.out.println("open LINK chatty " + _href);
                             ((MainActivity) getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
                             return true;
-                        } else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && uri.getPath().toLowerCase().contains("article")) {
+                        } else if ((uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST_WWW) || uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST)) && uri.getPath().toLowerCase().contains("article")) {
                             ((MainActivity) getActivity()).openInArticleViewer(uri.toString());
 
                     /*
@@ -227,7 +227,7 @@ public class FrontpageBrowserFragment extends Fragment {
                         */
                             return true;
                         }
-                        else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")))
+                        else if ((uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST_WWW) || uri.getHost().equalsIgnoreCase(AppConstants.SHACKNEWS_HOST)))
                         {
                             return false;
                         }

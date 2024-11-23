@@ -41,7 +41,7 @@ public class SearchResultFragment extends ListFragment
     int _pageNumber = 0;
 
     private int _mode = SearchResult.TYPE_SHACKSEARCHRESULT;
-	private String _tag = "lol";
+	private String _tag = AppConstants.TAG_TYPE_LOL;
 	private int _days = 1;
 	private boolean _viewAvailable;
 	private boolean _dualPane;
@@ -177,7 +177,7 @@ public class SearchResultFragment extends ListFragment
     	{
 			if (_mode == SearchResult.TYPE_SHACKSEARCHRESULT)
 				openSearch(_lastArgs, getActivity());
-			if (_mode == SearchResult.TYPE_LOL)
+			if (_mode == AppConstants.TAG_TYPEID_LOL)
 				openSearchLOL(_lastArgs, getActivity());
 			if (_mode == SearchResult.TYPE_DRAFTS)
 				openSearchDrafts(getActivity());
@@ -187,7 +187,7 @@ public class SearchResultFragment extends ListFragment
     protected void editSearch() {
     	if (_mode > 0 && _lastArgs != null)
     	{
-			if ((_mode == SearchResult.TYPE_SHACKSEARCHRESULT) || (_mode == SearchResult.TYPE_LOL))
+			if ((_mode == SearchResult.TYPE_SHACKSEARCHRESULT) || (_mode == AppConstants.TAG_TYPEID_LOL))
 			{
 				MainActivity mact = (MainActivity)getActivity();
 				// change fragments and use arg bundle
@@ -278,24 +278,28 @@ public class SearchResultFragment extends ListFragment
 
     public void openSearchLOL(Bundle args, Context context)
     {
-    	_mode = SearchResult.TYPE_LOL;
+    	_mode = AppConstants.TAG_TYPEID_LOL;
     	_lastArgs = args;
-    	if (args.containsKey("tag"))
-    	{
-    		_tag = args.getString("tag");
-    	} else _tag = "lol";
-    	if (args.containsKey("days"))
-    	{
+
+		_tag = AppConstants.TAG_TYPE_LOL;
+		if (args.containsKey(AppConstants.TAG_TYPE_TAG)) {
+    		_tag = args.getString(AppConstants.TAG_TYPE_TAG);
+    	}
+
+		_days = 1;
+    	if (args.containsKey("days")) {
     		_days = args.getInt("days");
-    	} else _days = 1;
-    	if (args.containsKey("author"))
-    	{
+    	}
+
+		_author = "";
+    	if (args.containsKey("author")) {
     		_author = args.getString("author");
-    	} else _author = "";
-    	if (args.containsKey("tagger"))
-    	{
+    	}
+
+		_tagger = "";
+    	if (args.containsKey("tagger")) {
     		_tagger = args.getString("tagger");
-    	} else _tagger = "";
+    	}
     	
     	_pageNumber = 0;
     	
@@ -464,7 +468,7 @@ public class SearchResultFragment extends ListFragment
                 holder.content = (TextView)convertView.findViewById(R.id.textContent);
                 holder.posted = (TextView)convertView.findViewById(R.id.textPostedTime);
                 holder.lolcount = (TextView)convertView.findViewById(R.id.sres_textPostLolCounts);
-                                
+
                 // support zoom
                 holder.userName.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.userName.getTextSize() * _zoom);
                 holder.content.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.content.getTextSize() * _zoom);
@@ -477,44 +481,55 @@ public class SearchResultFragment extends ListFragment
             SearchResult t = getItem(position);
             holder.userName.setText(t.getAuthor());
             holder.content.setText(PostFormatter.formatContent(t.getAuthor(), t.getContent(), null, false, true));
-            
-            if (t.getAuthor().equalsIgnoreCase("Shacknews"))
-            	holder.content.setMaxLines(7);
-            else
-            	holder.content.setMaxLines(2);
-            
+
+			holder.content.setMaxLines(2);
+            if (t.getAuthor().equalsIgnoreCase(AppConstants.SHACKNEWS_AUTHOR)) {
+				holder.content.setMaxLines(7);
+			}
+
             // markers for new posts
-            if (t.getNew())
-            	holder.container.setNew(true);
-            else
-            	holder.container.setNew(false);
+			holder.container.setNew(false);
+            if (t.getNew()) {
+				holder.container.setNew(true);
+			}
             
             if ((_mode != SearchResult.TYPE_SHACKSEARCHRESULT) && (_mode != SearchResult.TYPE_DRAFTS))
             {
             	holder.lolcount.setVisibility(View.VISIBLE);
 	            holder.lolcount.setText(Integer.toString(t.getExtra()));
-	            if (t.getType() == SearchResult.TYPE_LOL)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_lol);
-	            else if (t.getType() == SearchResult.TYPE_TAG)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_tag);
-				else if (t.getType() == SearchResult.TYPE_INF)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_inf);
-				else if (t.getType() == SearchResult.TYPE_UNF)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_unf);
-				else if (t.getType() == SearchResult.TYPE_WTF)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_wtf);
-				else if (t.getType() == SearchResult.TYPE_WOW)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_wow);
-				else
+
+	            if (t.getType() == AppConstants.TAG_TYPEID_LOL) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_lol);
+				}
+	            else if (t.getType() == AppConstants.TAG_TYPEID_TAG) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_tag);
+				}
+				else if (t.getType() == AppConstants.TAG_TYPEID_INF) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_inf);
+				}
+				else if (t.getType() == AppConstants.TAG_TYPEID_UNF) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_unf);
+				}
+				else if (t.getType() == AppConstants.TAG_TYPEID_WTF) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_wtf);
+				}
+				else if (t.getType() == AppConstants.TAG_TYPEID_WOW) {
+					holder.lolcount.setBackgroundResource(R.color.shacktag_wow);
+				}
+				else {
 					holder.lolcount.setBackgroundResource(R.color.nonpreview_post_text_color);
+				}
             }
-            else
-            	holder.lolcount.setVisibility(View.GONE);
+            else {
+				holder.lolcount.setVisibility(View.GONE);
+			}
             
-            if (!TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted())))
-        		holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
-        	else
-        		holder.posted.setText(TimeDisplay.convertTimeLong(t.getPosted()));
+            if (!TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted()))) {
+				holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
+			}
+        	else {
+				holder.posted.setText(TimeDisplay.convertTimeLong(t.getPosted()));
+			}
                     
             return convertView;
         }
@@ -522,7 +537,7 @@ public class SearchResultFragment extends ListFragment
         @Override
         protected ArrayList<SearchResult> loadData()
         {
-        	if (_mode == SearchResult.TYPE_LOL)
+        	if (_mode == AppConstants.TAG_TYPEID_LOL)
         	{
         		System.out.println("SEARCHING LOL: " +_tag +" days: "+_days);
         		ArrayList<SearchResult> results = new ArrayList<SearchResult>();

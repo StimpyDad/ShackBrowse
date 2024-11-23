@@ -11,13 +11,6 @@ public class SearchResult
     private boolean _new = false;
     
     public static int TYPE_SHACKSEARCHRESULT = 1;
-    public static int TYPE_LOL = 2;
-    public static int TYPE_TAG = 3;
-    public static int TYPE_INF = 4;
-    public static int TYPE_UNF = 5;
-    public static int TYPE_WTF = 6;
-    public static int TYPE_WOW = 7;
-    public static int TYPE_AWW = 9;
     public static int TYPE_DRAFTS = 8;
     
     public SearchResult(int postId, String author, String content, Long posted, int type, int extra)

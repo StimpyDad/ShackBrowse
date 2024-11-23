@@ -32,76 +32,103 @@ public class CheckableTableLayout extends TableLayout implements Checkable
         android.R.attr.state_checked
     };
     
-    public CheckableTableLayout(Context context, AttributeSet attrs)
-    {
+    public CheckableTableLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    protected int[] onCreateDrawableState(int extraSpace)
-    {
+    protected int[] onCreateDrawableState(int extraSpace) {
         final int[] drawableState = super.onCreateDrawableState(extraSpace + 8);
-        if (_checked)
+
+        if (_checked) {
             mergeDrawableStates(drawableState, CHECKED_STATE_SET);
-        if (_political)
+        }
+
+        // post types
+        if (_political) {
             mergeDrawableStates(drawableState, STATE_POLITICAL);
-        if (_tangent)
+        }
+        else if (_tangent) {
             mergeDrawableStates(drawableState, STATE_TANGENT);
-        if (_nws)
+        }
+        else if (_nws) {
             mergeDrawableStates(drawableState, STATE_NWS);
-        if (_stupid)
+        }
+        else if (_stupid) {
             mergeDrawableStates(drawableState, STATE_STUPID);
-        if (_inf)
+        }
+        else if (_inf) {
             mergeDrawableStates(drawableState, STATE_INF);
-        if (_new)
+        }
+
+        if (_new) {
             mergeDrawableStates(drawableState, STATE_NEW);
-        if (_loading)
+        }
+        if (_loading) {
             mergeDrawableStates(drawableState, STATE_LOADING);
+        }
+
         return drawableState;
     }
     
-    public void toggle()
-    {
+    public void toggle() {
         setChecked(!_checked);
     }
     
-    public boolean isChecked()
-    {
+    public boolean isChecked() {
         return _checked;
     }
     
-    public void setPolitical (boolean set)
-    {
-    	if (_political != set) { _political = set; refreshDrawableState(); }
+    public void setPolitical (boolean set) {
+    	if (_political != set){
+            _political = set;
+            refreshDrawableState();
+        }
     }
-    public void setTangent (boolean set)
-    {
-    	if (_tangent != set) { _tangent = set; refreshDrawableState(); }
+
+    public void setTangent (boolean set) {
+    	if (_tangent != set){
+            _tangent = set;
+            refreshDrawableState();
+        }
     }
-    public void setStupid (boolean set)
-    {
-    	if (_stupid != set) { _stupid = set; refreshDrawableState(); }
+
+    public void setStupid (boolean set) {
+    	if (_stupid != set){
+            _stupid = set;
+            refreshDrawableState();
+        }
     }
-    public void setNWS (boolean set)
-    {
-    	if (_nws != set) { _nws = set; refreshDrawableState(); }
+
+    public void setNWS (boolean set) {
+        if (_nws != set) {
+            _nws = set;
+            refreshDrawableState();
+        }
     }
-    public void setInf (boolean set)
-    {
-    	if (_inf != set) { _inf = set; refreshDrawableState(); }
+
+    public void setInf (boolean set) {
+    	if (_inf != set) {
+            _inf = set;
+            refreshDrawableState();
+        }
     }
-    public void setNew (boolean set)
-    {
-    	if (_new != set) { _new = set; refreshDrawableState(); }
+
+    public void setNew (boolean set) {
+    	if (_new != set) {
+            _new = set;
+            refreshDrawableState();
+        }
     }
-    public void setLoading (boolean set)
-    {
-    	if (_loading != set) { _loading = set; refreshDrawableState(); }
+
+    public void setLoading (boolean set) {
+    	if (_loading != set) {
+            _loading = set;
+            refreshDrawableState();
+        }
     }
-    public void setChecked(boolean checked)
-    {
-        if (checked != _checked)
-        {
+    public void setChecked(boolean checked) {
+        if (checked != _checked) {
             _checked = checked;
             refreshDrawableState();
         }

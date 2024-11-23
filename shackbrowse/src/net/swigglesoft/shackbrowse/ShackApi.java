@@ -379,6 +379,7 @@ public class ShackApi
     {
 		return processThreads(json, filterNone, new ArrayList<Integer>(), activity);
     }
+
     public static ArrayList<Thread> processThreads(JSONObject json, boolean filterNone, ArrayList<Integer> collapsed, Context activity) throws ClientProtocolException, IOException, JSONException
     {
         ArrayList<Thread> threads = new ArrayList<Thread>();
@@ -388,23 +389,29 @@ public class ShackApi
         if (activity != null)
         {
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-	        if (prefs.getBoolean("showInformative", true))
+	        if (prefs.getBoolean(AppConstants.USERPREF_SHOWINFORMATIVE, true)){
                 visible_categories.add(AppConstants.POST_TYPE_INFORMATIVE);
-            if (prefs.getBoolean("showTangent", true))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWTANGENT, true)) {
                 visible_categories.add(AppConstants.POST_TYPE_OFFTOPIC);
-            if (prefs.getBoolean("showStupid", true))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWSTUPID, true)) {
                 visible_categories.add(AppConstants.POST_TYPE_STUPID);
-            if (prefs.getBoolean("showPolitical", false))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWPOLITICAL, false)) {
                 visible_categories.add(AppConstants.POST_TYPE_POLITICAL);
-            if (prefs.getBoolean("showOntopic", true))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWONTOPIC, true)) {
                 visible_categories.add(AppConstants.POST_TYPE_ONTOPIC);
-            if (prefs.getBoolean("showNWS", false))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWNWS, false)) {
                 visible_categories.add(AppConstants.POST_TYPE_NWS);
-            if (prefs.getBoolean("showCortex", true))
+            }
+            if (prefs.getBoolean(AppConstants.USERPREF_SHOWCORTEX, true)) {
                 visible_categories.add(AppConstants.POST_TYPE_CORTEX);
+            }
         }
-        else
-        {
+        else {
             visible_categories.add(AppConstants.POST_TYPE_INFORMATIVE);
             visible_categories.add(AppConstants.POST_TYPE_OFFTOPIC);
             visible_categories.add(AppConstants.POST_TYPE_STUPID);

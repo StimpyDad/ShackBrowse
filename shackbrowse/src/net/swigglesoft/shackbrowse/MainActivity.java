@@ -640,8 +640,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		_messageList = new MessageFragment();
 
-		if (fm.findFragmentById(R.id.menu_frame) != null)
+		if (fm.findFragmentById(R.id.menu_frame) != null) {
 			_appMenu = (AppMenu) fm.findFragmentById(R.id.menu_frame);
+		}
 		else
 		{
 			_appMenu = new AppMenu();
@@ -1254,8 +1255,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         boolean showFPBrowserItems = (((_currentFragmentType == CONTENT_FRONTPAGE) || (_currentFragmentType == CONTENT_LOLPAGE)) && (dualPane || !areSlidersOpen)) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
         
         boolean browserZoomMode = false;
-        if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_ZOOM_CONTROLS))
-        	browserZoomMode = true;
+        if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_ZOOM_CONTROLS)) {
+			browserZoomMode = true;
+		}
         
         menu.findItem(R.id.menu_refreshFav).setVisible(showFavItems && (!isMenuOpen));
         menu.findItem(R.id.menu_discardFav).setVisible(showFavItems && (!isMenuOpen));
@@ -1291,8 +1293,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    });
 
 
-	    if ((!showTListItems) && (mFinder.isActionViewExpanded()))
-        	mFinder.collapseActionView();
+	    if ((!showTListItems) && (mFinder.isActionViewExpanded())) {
+			mFinder.collapseActionView();
+		}
         menu.findItem(R.id.menu_keywordFilter).setVisible(showTListItems);
         menu.findItem(R.id.menu_modtagFilter).setVisible(showTListItems);
         menu.findItem(R.id.menu_newPost).setVisible(showTListItems);
@@ -1779,23 +1782,36 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         input.requestFocus();
 	}
 	
-	public void openThreadView(int threadId) { openThreadView(threadId, null, 0, null, false, 0, null, false, false); }
+	public void openThreadView(int threadId){
+		openThreadView(threadId, null, 0, null, false, 0, null, false, false);
+	}
+
 	public void openThreadView(int threadId, Thread thread, LolObj lol) {
 		Post post = Post.fromThread(thread);
 		post.setLolObj(lol);
 		openThreadView(threadId, post, 0, thread.getJson().toString(), false, 0, null, false, false);
 	}
-	public void openThreadViewAndSelect(int selectPostIdAfterLoading) {	openThreadView(selectPostIdAfterLoading, null, selectPostIdAfterLoading, null, false, 0, null, false, true); }
+
+	public void openThreadViewAndSelect(int selectPostIdAfterLoading){
+		openThreadView(selectPostIdAfterLoading, null, selectPostIdAfterLoading, null, false, 0, null, false, true);
+	}
+
 	public void openThreadViewAndSelectWithBackStack(int selectPostIdAfterLoading) {
 		openThreadView(selectPostIdAfterLoading, null, selectPostIdAfterLoading, null, false, 0, null, true, true);
 	}
+
 	public void openThreadViewAndFave(int faveThreadId)	{
 
 		// sometimes this is called while the app is actually closed, and this causes a crash
-		if (!_threadView.isDetached())
+		if (!_threadView.isDetached()) {
 			openThreadView(faveThreadId, null, 0, null, true, 0, null, false, false);
+		}
 	}
-	public void openMessageView(int messageId, Message message)	{ openThreadView(0, Post.fromMessage(message), 0, null, false, messageId, message.getSubject(), false, false); }
+
+	public void openMessageView(int messageId, Message message)	{
+		openThreadView(0, Post.fromMessage(message), 0, null, false, messageId, message.getSubject(), false, false);
+	}
+
 	public void openThreadView(int threadId, Post post, int selectPostIdAfterLoading, String json, boolean autoFaveOnLoad, int messageId, String messageSubject, boolean preserveBackStack, boolean doesntExpire)
 	{
         StatsFragment.statInc(this, "ThreadOpened");
@@ -1804,61 +1820,61 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		long current = (System.currentTimeMillis() / 1000);
 		
 		// threadview data expires after 2 minute
-		if ((_lastOpenedThreadViewEpochSeconds > 0) && ((current - _lastOpenedThreadViewEpochSeconds) > 120))
+		if ((_lastOpenedThreadViewEpochSeconds > 0) && ((current - _lastOpenedThreadViewEpochSeconds) > 120)) {
 			expired = true;
+		}
 		
-		if (doesntExpire)
+		if (doesntExpire) {
 			expired = false;
+		}
 		
 		_lastOpenedThreadViewEpochSeconds = current;
 		hideKeyboard();
 
-
         ThreadViewFragment view = _threadView;
 
-        if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId) && view.isAdded())
-        {
+        if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId) && view.isAdded()) {
         	view._rootPostId = threadId;
         	view._messageId = messageId;
         	view._selectPostIdAfterLoading = selectPostIdAfterLoading;
         	view._autoFaveOnLoad = autoFaveOnLoad;
         	view._messageSubject = messageSubject;
         	
-        	if (view._adapter != null)
-        	{
-        		if (!_dualPane) { view._adapter.setHoldPostExecute(true); }
+        	if (view._adapter != null) {
+        		if (!_dualPane) {
+					view._adapter.setHoldPostExecute(true);
+				}
 	        	view._adapter.clear();
 	        	view._adapter.triggerLoadMore();
         	}
         	
-        	if (post != null)
-	        {
-
-		        if (view._adapter != null)
-		            view.loadPost(post);
-		        else
-			        view._loadPostAfterAdapterReady = post;
+        	if (post != null) {
+		        if (view._adapter != null) {
+					view.loadPost(post);
+				}
+		        else {
+					view._loadPostAfterAdapterReady = post;
+				}
 	        }
 
-            if (json != null)
-            {
+            if (json != null) {
             	try {
 					view._lastThreadJson = new JSONObject(json);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
             }
-            else
-            	view._lastThreadJson = null;
+            else {
+				view._lastThreadJson = null;
+			}
         	
             view.updateThreadViewUi();
         }
-        else if (view.isPostIdInAdapter(threadId))
-        {
+        else if (view.isPostIdInAdapter(threadId)) {
         	view.ensurePostSelectedAndDisplayed(threadId, true);
         }
-        if (!preserveBackStack)
-        {
+
+        if (!preserveBackStack) {
         	this.resetThreadIdBackStack();
         }
         
@@ -1873,8 +1889,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	
 	public void mRefreshOfflineThreads()
     {
-		if (_currentFragmentType == CONTENT_FAVORITES)
-		{
+		if (_currentFragmentType == CONTENT_FAVORITES) {
 			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 			otf.refreshOfflineThreads();
     	}
@@ -1882,24 +1897,23 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	
     public void mRefreshOfflineThreadsWoReplies()
     {
-    	if (_currentFragmentType == CONTENT_FAVORITES)
-		{
+    	if (_currentFragmentType == CONTENT_FAVORITES) {
 			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 			otf.updateThreadsWithoutUpdateReplies();
 		}
     	
-		if (_threadList._adapter != null)
+		if (_threadList._adapter != null) {
 			_threadList._adapter.notifyDataSetChanged();
+		}
     }
 
 	public void attemptToUpdateReplyCountInThreadListTo(int rootId, int replies, boolean replied)
 	{
-		if (_threadList._adapter != null)
-		{
+		if (_threadList._adapter != null) {
 			System.out.println("UpdateReplies: TRYING" + rootId);
 			int checkIndexFirst = _threadList._itemChecked + 1; // should almost always work, will be faster than looping
-			if (_threadList._adapter.getCount() > checkIndexFirst && _threadList._adapter.getItem(checkIndexFirst).getThreadId() == rootId)
-			{
+
+			if (_threadList._adapter.getCount() > checkIndexFirst && _threadList._adapter.getItem(checkIndexFirst).getThreadId() == rootId) {
 				_threadList._adapter.getItem(checkIndexFirst).setReplyCount(replies);
 				_threadList._adapter.getItem(checkIndexFirst).setReplied(replied);
 				System.out.println("UpdateReplies: FOUND INDEX THE EASY WAY");
@@ -1918,7 +1932,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			// its possible neither of these will be successful for instance if the threadview is in an old thread. awell.
 			_threadList._adapter.notifyDataSetChanged();
 		}
-
 	}
     
     public void markFavoriteAsRead(int _rootPostId, int count) {
@@ -1966,22 +1979,27 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     	_messageList.refreshMessages();
 	    setTitleContextually();
     }
+
     public boolean getMessageType()
     {
     	return _messagesGetInbox;
     }
+
     public MessageFragment getMessageFragment()
     {
 		return _messageList;
     }
+
     public void refreshMessages()
     {
     	getMessageFragment()._adapter.triggerLoadMore();
     }
+
     public void clearMessages()
     {
     	getMessageFragment()._adapter.clear();
     }
+
     public void openSearch(Bundle args)
 	{
         statInc(this, "SearchedForPosts");
@@ -1996,6 +2014,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		setTitleContextually();
 		hideKeyboard();
 	}
+
 	public void openSearchLOL(Bundle args)
 	{
         statInc(this, "SearchedForLOLs");
@@ -2010,6 +2029,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		hideKeyboard();
 		setTitleContextually();
 	}
+
 	public void openSearchDrafts()
 	{
         statInc(this, "LookedAtDrafts");
@@ -2034,19 +2054,21 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		if (getDualPane())
 		{
 			this.findViewById(R.id.content_frame).setVisibility((set) ? View.GONE : View.VISIBLE);
-			if (set)
-				((RelativeLayout.LayoutParams)_tviewFrame.getLayoutParams()).width = this.getScreenWidth();
-			else
+			if (set) {
+				((RelativeLayout.LayoutParams) _tviewFrame.getLayoutParams()).width = this.getScreenWidth();
+			}
+			else {
 				setDualPane(true);
+			}
 		}
 		
 	}
-	public boolean getThreadViewFullScreen()
-	{
+
+	public boolean getThreadViewFullScreen() {
 		return (findViewById(R.id.drawerContainer).getVisibility() == View.GONE);
 	}
-	public void evaluateDualPane(Configuration conf)
-	{
+
+	public void evaluateDualPane(Configuration conf) {
         _splitView = Integer.parseInt(_prefs.getString("splitView", "1"));
 
 		if (_orientLock != Integer.parseInt(_prefs.getString("orientLock", "0")))
@@ -2724,6 +2746,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
 		return CANNOTHANDLEINTENT;
 	}
+
 	private boolean handleIntent(Intent intent) {
 		if (intent != null)
 		{
@@ -3193,6 +3216,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        alert.show();
     	}
     }
+
 	protected void cloudIntervalChoose() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Cloud Interval");
@@ -3325,6 +3349,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         FragmentManager fm = getFragmentManager();
         return fm.findFragmentByTag(tag);
     }
+
 	public void setBrowserTitle(String title)
 	{
 		if (!title.contentEquals("about:blank")) {
@@ -3332,14 +3357,17 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			setTitleContextually();
 		}
 	}
+
 	public void setBrowserSubTitle(String title)
 	{
 		mBrowserPageSubTitle = title;
 		setTitleContextually();
 	}
+
 	protected void closeBrowser() {
 		closeBrowser(false, null, false);
 	}
+
 	private void closeBrowser(boolean immediate, final mAnimEnd onEnd, final boolean quiet) {
 		
 		if (!mBrowserIsClosing)
@@ -3389,6 +3417,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	{
 		public void end();
 	}
+
 	public class anim
 	{
 		private mAnimEnd mCallBack = null;
@@ -3653,7 +3682,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				String[] splt = href.split("youtu.be/");
 				if (splt.length > 1)
 				{
-					href = "http://www.youtube.com/watch?v=" + splt[1];
+					href = "https://www.youtube.com/watch?v=" + splt[1];
 				}
 			}
 
@@ -4065,6 +4094,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		else { list = "(no names on list)"; }
 		return list;
 	}
+
 	public void blockUser (String username)
 	{
 		boolean echoPalatize = _prefs.getBoolean("echoPalatize", false);

@@ -30,12 +30,17 @@ public class Post implements Comparable<Post> {
 	private LolObj _lolobj = null;
 	
 	private int _userType = 0;
+    private boolean _seen = true;
+    private boolean _isWorking = false;
+
 	private boolean _isNWS = false;
 	private boolean _isINF = false;
-	private boolean _seen = true;
 	private boolean _isPolitical = false;
-	private boolean _isPQP = false;
-    private boolean _isWorking = false;
+    private boolean _isTangent = false;
+    private boolean _isStupid = false;
+	// post queue post
+    private boolean _isPQP = false;
+
 
 
 
@@ -126,6 +131,7 @@ public class Post implements Comparable<Post> {
     {
     	this(postId, userName, content, postedTime, level, moderation, expanded, true, false);
     }
+
     public Post(int postId, String userName, String content, Long postedTime, int level, String moderation, boolean expanded, boolean seen, boolean isPQP)
     {
         _postId = postId;
@@ -179,25 +185,32 @@ public class Post implements Comparable<Post> {
         setUserType();
         preSetModeration();
     }
+
     public void setLevel(int level) {
     	_level = level;
     	if (level > 1)
         {
 	        char[] zeroes1 = new char[(level -1)];
 	        Arrays.fill(zeroes1, '0');
-	        if (_seen)
-	        	_depthString = new String(zeroes1) + "L";
-	        else
-	        	_depthString = new String(zeroes1) + "[";
+	        if (_seen) {
+                _depthString = new String(zeroes1) + "L";
+            }
+	        else {
+                _depthString = new String(zeroes1) + "[";
+            }
         }
         else if (level == 1)
         {
-        	if (_seen)
-        		_depthString = "L";
-        	else
-        		_depthString = "[";
+        	if (_seen) {
+                _depthString = "L";
+            }
+        	else {
+                _depthString = "[";
+            }
         }
-        else _depthString = "";
+        else {
+            _depthString = "";
+        }
 
         setDepthString(_depthString);
         setDepthStringFormatted(_depthString);
@@ -207,14 +220,17 @@ public class Post implements Comparable<Post> {
     {
     	return _seen;
     }
+
     public boolean isPQP()
     {
     	return _isPQP;
     }
+
     public boolean isWorking()
     {
         return _isWorking;
     }
+
     public void setSeen(boolean set)
     {
     	_seen  = set;
@@ -254,28 +270,44 @@ public class Post implements Comparable<Post> {
     {
         return _moderation;
     }
+
     // next 3 are purely optimization
     public void preSetModeration()
     {
-    	if (getModeration().equalsIgnoreCase("informative"))
-    		_isINF =  true;
-    	if (getModeration().equalsIgnoreCase("nws"))
-    		_isNWS =  true;
-    	if (getModeration().equalsIgnoreCase("political"))
-    		_isPolitical =  true;
+    	if (getModeration().equalsIgnoreCase(AppConstants.POST_TYPE_INFORMATIVE)) {
+            _isINF = true;
+        }
+    	else if (getModeration().equalsIgnoreCase(AppConstants.POST_TYPE_NWS)) {
+            _isNWS = true;
+        }
+    	else if (getModeration().equalsIgnoreCase(AppConstants.POST_TYPE_POLITICAL)) {
+            _isPolitical = true;
+        }
+        else if (getModeration().equalsIgnoreCase(AppConstants.POST_TYPE_TANGENT)) {
+            _isTangent = true;
+        }
+        else if (getModeration().equalsIgnoreCase(AppConstants.POST_TYPE_STUPID)) {
+            _isStupid = true;
+        }
     }
-    public boolean isNWS()
-    {
+
+    public boolean isNWS() {
     	return _isNWS;
     }
-    public boolean isINF()
-    {
+    public boolean isINF() {
     	return _isINF;
     }
-    public boolean isPolitical()
-    {
+    public boolean isPolitical() {
     	return _isPolitical ;
     }
+    public boolean isTangent(){
+        return _isTangent;
+    }
+    public boolean isStupid(){
+        return _isStupid;
+    }
+
+
     public void setOrder(int value)
     {
         _order = value;
@@ -295,10 +327,12 @@ public class Post implements Comparable<Post> {
     {
     	return _expanded;
     }
+
     public void setExpanded(boolean setTo)
     {
     	_expanded = setTo;
     }
+
     public String getCopyText()
     {
         return PostFormatter.formatContent(this, true).toString();
@@ -308,6 +342,7 @@ public class Post implements Comparable<Post> {
     {
     	return _lolobj;
     }
+
     public void setLolObj(LolObj obj)
     {
     	_lolobj = obj;
@@ -339,19 +374,25 @@ public class Post implements Comparable<Post> {
     {
         return _postId > post.getPostId() ? 1 : (_postId < post.getPostId() ? -1 : 0);
     }
+
 	public void setIsPQP(boolean isPQP) {
 		_isPQP = isPQP;
 	}
+
     public void setIsWorking(boolean isWorking) {
         _isWorking = isWorking;
     }
+
 	public void setPostId(int postId) {
 		_postId = postId;
 	}
+
 	public void setPosted(long posted)
 	{
 		_postedTime = posted;
 	}
+
 	public void setContent(String content) { _content = content; }
+
 	public void setPreview(Spannable preview) { _preview = preview; }
 }

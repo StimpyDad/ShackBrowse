@@ -528,13 +528,13 @@ public class MessageFragment extends ListFragment
             Message m = getItem(position);
             
             // make sure item exists
-            if (m == null)
-            {
+            if (m == null) {
             	holder.container.setVisibility(View.GONE);
             	return convertView;
             }
-            else
-            	holder.container.setVisibility(View.VISIBLE);
+            else {
+                holder.container.setVisibility(View.VISIBLE);
+            }
             
             
        

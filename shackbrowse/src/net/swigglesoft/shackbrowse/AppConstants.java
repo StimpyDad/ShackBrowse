@@ -37,8 +37,20 @@ public class AppConstants
     static final String URL_SHACKMSGPOST = SHACKNEWS_URL + "/messages/send";
     static final String URL_SHACKMSGREAD = SHACKNEWS_URL + "/messages/read";
 
+    static final String USERNAME_TMWTB = "the man with the briefcase";
+
+    static final String USERPREF_SHOWINFORMATIVE = "showInformative";
+    static final String USERPREF_SHOWTANGENT = "showTangent";
+    static final String USERPREF_SHOWSTUPID = "showStupid";
+    static final String USERPREF_SHOWNWS = "showNWS";
+    static final String USERPREF_SHOWPOLITICAL = "showPolitical";
+    static final String USERPREF_SHOWONTOPIC = "showOntopic";
+    static final String USERPREF_SHOWCORTEX = "showCortex";
+
+
     static final int USERTYPE_EMPLOYEE = 2;
     static final int USERTYPE_MODERATOR = 1;
+
 
 
     // no longer used

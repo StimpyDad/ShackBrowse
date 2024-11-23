@@ -97,7 +97,9 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
     }
     protected void setCurrentlyLoading(boolean set)
     {
-    	if (_verbose) System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+    	if (_verbose){
+            System.out.println("LOADINGADAPTER: set currently loading to " + set + " uuid:" + _uniqueId);
+        }
         _isLoading = set;
     }
     

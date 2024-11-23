@@ -16,7 +16,7 @@ public class Thread implements Parcelable {
     private String _content = "unset";
     private int _replyCount = 0;
     private int _replyCountPrevious = 0;
-    private String _moderation = "ontopic";
+    private String _moderation = AppConstants.POST_TYPE_ONTOPIC;
     private boolean _replied = false;
     private JSONObject _json;
 
@@ -128,8 +128,9 @@ public class Thread implements Parcelable {
     }
     public Spannable getPreview(boolean showTags, boolean stripNewLines)
     {
-        if (_preview == null)
+        if (_preview == null){
             _preview = PostFormatter.formatContent(this, !stripNewLines, showTags);
+        }
         return _preview;
     }
     public void nullifyPreview()

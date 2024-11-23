@@ -239,9 +239,9 @@ public class ThreadListFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
-        super.onActivityCreated(savedInstanceState);
-       
-       	getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		super.onActivityCreated(savedInstanceState);
+
+		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
        	//getListView().setBackgroundColor(getResources().getColor(R.color.app_bg_color));
        	getListView().setTextFilterEnabled(true);
        	
@@ -570,24 +570,62 @@ public class ThreadListFragment extends ListFragment
     public static final int POST_NEW_THREAD = 430;
     public static final int OPEN_THREAD_VIEW = 1290;
     public static final int OPEN_PREFS = 2117;
-    
-    public void showFilters()
+
+	private final int prefIndexTangent = 0;
+	private final int prefIndexInformative = 1;
+	private final int prefIndexNWS = 2;
+	private final int prefIndexStupid = 3;
+	private final int prefIndexPolitical = 4;
+	private final int prefIndexOnTopic = 5;
+	private final int prefIndexCortex = 6;
+
+	public void showFilters()
     {
-        boolean _showInformative = _prefs.getBoolean("showInformative", true);
-        boolean _showTangent = _prefs.getBoolean("showTangent", true);
-        boolean _showStupid = _prefs.getBoolean("showStupid", true);
-        boolean _showNWS = _prefs.getBoolean("showNWS", false);
-        boolean _showPolitical = _prefs.getBoolean("showPolitical", false);
-        boolean _showOntopic = _prefs.getBoolean("showOntopic", true);
-		boolean _showCortex = _prefs.getBoolean("showCortex", true);
+        boolean _showInformative = _prefs.getBoolean(AppConstants.USERPREF_SHOWINFORMATIVE, true);
+        boolean _showTangent = _prefs.getBoolean(AppConstants.USERPREF_SHOWTANGENT, true);
+        boolean _showStupid = _prefs.getBoolean(AppConstants.USERPREF_SHOWSTUPID, true);
+        boolean _showNWS = _prefs.getBoolean(AppConstants.USERPREF_SHOWNWS, false);
+        boolean _showPolitical = _prefs.getBoolean(AppConstants.USERPREF_SHOWPOLITICAL, false);
+        boolean _showOntopic = _prefs.getBoolean(AppConstants.USERPREF_SHOWONTOPIC, true);
+		boolean _showCortex = _prefs.getBoolean(AppConstants.USERPREF_SHOWCORTEX, true);
 
         MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
-        build.title("Choose which to show");
-        final String[] items = { "tangent","informative","nws","stupid","political","ontopic","cortex"};
+        build.title("Choose which posts to show");
+
+        final String[] items = {
+			AppConstants.POST_TYPE_TANGENT,
+			AppConstants.POST_TYPE_INFORMATIVE,
+			AppConstants.POST_TYPE_NWS,
+			AppConstants.POST_TYPE_STUPID,
+			AppConstants.POST_TYPE_POLITICAL,
+			AppConstants.POST_TYPE_ONTOPIC,
+			AppConstants.POST_TYPE_CORTEX
+		};
+
         ArrayList<Integer> index = new ArrayList<Integer>();
-        if (_showTangent) index.add(new Integer(0)); if (_showInformative) index.add(new Integer(1)); if (_showNWS) index.add(new Integer(2)); if (_showStupid) index.add(new Integer(3)); if (_showPolitical) index.add(new Integer(4)); if (_showOntopic) index.add(new Integer(5)); if (_showCortex) index.add(new Integer(6));
+        if (_showTangent) {
+			index.add(new Integer(prefIndexTangent));
+		}
+		if (_showInformative) {
+			index.add(new Integer(prefIndexInformative));
+		}
+		if (_showNWS) {
+			index.add(new Integer(prefIndexNWS));
+		}
+		if (_showStupid) {
+			index.add(new Integer(prefIndexStupid));
+		}
+		if (_showPolitical){
+			index.add(new Integer(prefIndexPolitical));
+		}
+		if (_showOntopic) {
+			index.add(new Integer(prefIndexOnTopic));
+		}
+		if (_showCortex) {
+			index.add(new Integer(prefIndexCortex));
+		}
         final Integer[] checkedItems = index.toArray(new Integer[]{});
-        // final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
+
         build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMultiChoice() {
             @Override
             public boolean onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
@@ -602,40 +640,55 @@ public class ThreadListFragment extends ListFragment
                 Integer[] index = dialog.getSelectedIndices();
                 ArrayList<Integer> checkedIndices = new ArrayList<Integer>(Arrays.asList(index));
                 Editor edit = _prefs.edit();
-                if (checkedIndices.contains(0) == true)
-                    edit.putBoolean("showTangent", true);
-                else
-                    edit.putBoolean("showTangent", false);
 
-                if (checkedIndices.contains(1) == true)
-                    edit.putBoolean("showInformative", true);
-                else
-                    edit.putBoolean("showInformative", false);
+                if (checkedIndices.contains(prefIndexTangent) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWTANGENT, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWTANGENT, false);
+				}
 
-                if (checkedIndices.contains(2) == true)
-                    edit.putBoolean("showNWS", true);
-                else
-                    edit.putBoolean("showNWS", false);
+                if (checkedIndices.contains(prefIndexInformative) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWINFORMATIVE, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWINFORMATIVE, false);
+				}
 
-                if (checkedIndices.contains(3) == true)
-                    edit.putBoolean("showStupid", true);
-                else
-                    edit.putBoolean("showStupid", false);
+                if (checkedIndices.contains(prefIndexNWS) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWNWS, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWNWS, false);
+				}
 
-                if (checkedIndices.contains(4) == true)
-                    edit.putBoolean("showPolitical", true);
-                else
-                    edit.putBoolean("showPolitical", false);
+                if (checkedIndices.contains(prefIndexStupid) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWSTUPID, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWSTUPID, false);
+				}
 
-                if (checkedIndices.contains(5) == true)
-                    edit.putBoolean("showOntopic", true);
-                else
-                    edit.putBoolean("showOntopic", false);
+                if (checkedIndices.contains(prefIndexPolitical) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWPOLITICAL, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWPOLITICAL, false);
+				}
 
-				if (checkedIndices.contains(6) == true)
-					edit.putBoolean("showCortex", true);
-				else
-					edit.putBoolean("showCortex", false);
+                if (checkedIndices.contains(prefIndexOnTopic) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWONTOPIC, true);
+				}
+                else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWONTOPIC, false);
+				}
+
+				if (checkedIndices.contains(prefIndexCortex) == true) {
+					edit.putBoolean(AppConstants.USERPREF_SHOWCORTEX, true);
+				}
+				else {
+					edit.putBoolean(AppConstants.USERPREF_SHOWCORTEX, false);
+				}
 
                 edit.commit();
                 refreshThreads();
@@ -702,33 +755,28 @@ public class ThreadListFragment extends ListFragment
     }
 
     // COLLAPSED
-    	 
-    void addCollapsed(int threadId)
-    {
-    	if (!mCollapsed.contains(threadId))
-        {
+    void addCollapsed(int threadId) {
+    	if (!mCollapsed.contains(threadId)) {
             mCollapsed.add(threadId);
     	}
     }
-    void removeCollapsed(int threadId)
-    {
-    	if (mCollapsed.contains(threadId))
-        {
+
+    void removeCollapsed(int threadId) {
+    	if (mCollapsed.contains(threadId)) {
             mCollapsed.remove(Integer.valueOf(threadId));
     	}
     }
-    public void reloadCollapsed()
-    {
+
+    public void reloadCollapsed() {
     	mCollapsed = getCollapsed();
     }
-    protected ArrayList<Integer> getCollapsed()
-    {
+
+    protected ArrayList<Integer> getCollapsed() {
     	String filename = COLLAPSED_CACHE_FILENAME;
     	new ArrayList<Integer>();
     	ArrayList<Integer> collapsed = new ArrayList<Integer>();
 
-        if (getActivity().getFileStreamPath(filename).exists())
-        {
+        if (getActivity().getFileStreamPath(filename).exists()) {
             // look at that, we got a file
             try {
                 FileInputStream input = getActivity().openFileInput(filename);
@@ -761,8 +809,8 @@ public class ThreadListFragment extends ListFragment
         }
         return collapsed;
     }
-    private void storeCollapsed(ArrayList<Integer> collapsed) throws IOException
-    {
+
+    private void storeCollapsed(ArrayList<Integer> collapsed) throws IOException {
     	String filename = COLLAPSED_CACHE_FILENAME;
     	List<Integer> postIds = new ArrayList<Integer>();
     	for (int i = 0; i < collapsed.size(); i++)
@@ -772,8 +820,9 @@ public class ThreadListFragment extends ListFragment
     	
     	// trim to last 1000 posts
         Collections.sort(postIds);
-        if (postIds.size() > COLLAPSED_SIZE)
-            postIds.subList(postIds.size() - COLLAPSED_SIZE, postIds.size() - 1);
+        if (postIds.size() > COLLAPSED_SIZE) {
+			postIds.subList(postIds.size() - COLLAPSED_SIZE, postIds.size() - 1);
+		}
 
         FileOutputStream output = getActivity().openFileOutput(filename, Activity.MODE_PRIVATE);
         try
@@ -795,8 +844,7 @@ public class ThreadListFragment extends ListFragment
         }
     }
     
-    public void addFiltWord(final int type)
-	{
+    public void addFiltWord(final int type) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     	builder.setTitle("Add Keyword Filter");
     	// Set up the input
@@ -826,8 +874,8 @@ public class ThreadListFragment extends ListFragment
         alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
-    public void removeFiltWord(final String keyword, final String filename)
-    {
+
+    public void removeFiltWord(final String keyword, final String filename) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     	builder.setTitle("Remove Filter Keyword");
     	String type = null;
@@ -854,8 +902,8 @@ public class ThreadListFragment extends ListFragment
         alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
-    public void showFiltWordList()
-    {
+
+    public void showFiltWordList() {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Keyword Filters");
         final Filtword dfwords = new Filtword(DELETE_FILTWORD_FILENAME);
@@ -879,6 +927,7 @@ public class ThreadListFragment extends ListFragment
         alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
+
 	// FILTERABLE KEYWORDS
     class Filtword {
     	private String _filename;

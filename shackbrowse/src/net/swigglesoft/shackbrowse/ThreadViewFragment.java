@@ -916,7 +916,15 @@ public class ThreadViewFragment extends ListFragment
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 		builder.setTitle("Shack Moderator Tag");
-		final CharSequence[] items = { "interesting","nws","stupid","tangent","ontopic","political" };
+		final CharSequence[] items = {
+				AppConstants.POST_TYPE_INTERESTING,
+				AppConstants.POST_TYPE_NWS,
+				AppConstants.POST_TYPE_STUPID,
+				AppConstants.POST_TYPE_TANGENT,
+				AppConstants.POST_TYPE_ONTOPIC,
+				AppConstants.POST_TYPE_POLITICAL
+		};
+
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				modPost((String)items[item], pos);
@@ -1142,9 +1150,7 @@ public class ThreadViewFragment extends ListFragment
 	{
 		if (getListView().getPositionForView(v) != ListView.INVALID_POSITION)
 		{
-
 			this._postYLoc = v.getTop();
-
 			expandAndCheckPostWithoutAnimation(v);
 
 			// calculate sizes
@@ -1164,17 +1170,17 @@ public class ThreadViewFragment extends ListFragment
 				@Override
 				public void run() {
 					View betterView = getListViewChildAtPosition(pos, listView);
-					if (betterView != null)
-					{
+					if (betterView != null) {
 						listView.requestChildRectangleOnScreen(betterView, new Rect(0, 0, betterView.getRight(), betterView.getHeight()), false);
 					}
-					else
-						listView.requestChildRectangleOnScreen(view,
-								new Rect(0, 0, view.getRight(), view.getHeight()), false);
+					else {
+						listView.requestChildRectangleOnScreen(view, new Rect(0, 0, view.getRight(), view.getHeight()), false);
+					}
 				}
 			});
 		}
 	}
+
 	private View getListViewChildAtPosition(int position, ListView listView)
 	{
 		int wantedPosition = position; // Whatever position you're looking for
@@ -1195,6 +1201,7 @@ public class ThreadViewFragment extends ListFragment
 	{
 		expandAndCheckPostWithoutAnimation(getListView().getPositionForView(v));
 	}
+
 	private void expandAndCheckPostWithoutAnimation(int listviewposition)
 	{
 		_adapter.expandWithoutAnimation(listviewposition);
@@ -1233,6 +1240,7 @@ public class ThreadViewFragment extends ListFragment
        	_adapter.notifyDataSetChanged();
        	*/
 	}
+
 	private void expandAndCheckPost(int listviewposition)
 	{
 		_adapter.expand(listviewposition);
@@ -1299,6 +1307,7 @@ public class ThreadViewFragment extends ListFragment
 				mPlayer = player; mPlayerView = playerView; mPosition = position; mTag = tag;
 			}
 		}
+
 		// -1 clears all players
 		public void exoPlayerCleanup (int position)
 		{
@@ -2163,7 +2172,6 @@ public class ThreadViewFragment extends ListFragment
 
 		protected View createView(int position, View convertView, ViewGroup parent, boolean isExpanded)
 		{
-
 			// get the thread to display and populate all the data into the layout
 			Post p = getItem(position);
 
@@ -2248,11 +2256,9 @@ public class ThreadViewFragment extends ListFragment
                 holder.buttonLol.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.buttonLol.getTextSize() * _zoom);
                 */
 
-
 				// buttons are already as small as they can be
 				if (_zoom >= 0.9)
 				{
-
 					ViewGroup.LayoutParams buttonLayout = holder.buttonSharePost.getLayoutParams();
 					buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
 					buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
@@ -2296,29 +2302,29 @@ public class ThreadViewFragment extends ListFragment
 				convertView.setTag(holder);
 			}
 
-
 			// preview titleview
 			if (!isExpanded)
 			{
-
-
 				// this is created by the animator, have to remove it or recycled views get weird
 				holder.previewRow.setLayoutTransition(null);
 
 				// reset container modifiers
 				holder.rowtype.setModTagsFalse();
 				holder.rowtype.setChecked(isExpanded(position));
-				if (p.isNWS())
-				{
+				if (p.isNWS()) {
 					holder.rowtype.setNWS(true);
 				}
-				else if (p.isINF())
-				{
+				else if (p.isINF()) {
 					holder.rowtype.setInf(true);
 				}
-				else if (p.isPolitical())
-				{
+				else if (p.isPolitical()) {
 					holder.rowtype.setPolitical(true);
+				}
+				else if(p.isTangent()){
+					holder.rowtype.setTangent(true);
+				}
+				else if(p.isStupid()){
+					holder.rowtype.setStupid(true);
 				}
 				else
 				{
@@ -2403,7 +2409,7 @@ public class ThreadViewFragment extends ListFragment
 
 						 */
 					}
-					else if (p.getUserName().toLowerCase().equals("the man with the briefcase"))
+					else if (p.getUserName().toLowerCase().equals(AppConstants.USERNAME_TMWTB))
 					{
 						holder.previewLimeHolder.setImageDrawable(_briefcaseIcon);
 					}
@@ -2639,10 +2645,8 @@ public class ThreadViewFragment extends ListFragment
 			alert.show();
 		}
 
-		private CharSequence applyHighlight(String preview)
-		{
-			if ((_highlight != null) && (_highlight.length() > 0))
-			{
+		private CharSequence applyHighlight(String preview) {
+			if ((_highlight != null) && (_highlight.length() > 0)) {
 				return applyHighlight(new SpannableString(preview));
 			}
 			else {
@@ -2651,8 +2655,7 @@ public class ThreadViewFragment extends ListFragment
 		}
 
 		private CharSequence applyHighlight(Spannable preview) {
-			if ((_highlight != null) && (_highlight.length() > 0))
-			{
+			if ((_highlight != null) && (_highlight.length() > 0)) {
 				Spannable text = preview;
 				String txtplain = text.toString().toLowerCase();
 				int color = getResources().getColor(R.color.modtag_political);
@@ -2663,16 +2666,15 @@ public class ThreadViewFragment extends ListFragment
 					startSpan = txtplain.indexOf(target, endSpan);
 					BackgroundColorSpan foreColour = new BackgroundColorSpan(color);
 					// Need a NEW span object every loop, else it just moves the span
-					if (startSpan < 0)
+					if (startSpan < 0) {
 						break;
+					}
 					endSpan = startSpan + target.length();
-					highlighted.setSpan(foreColour, startSpan, endSpan,
-							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					highlighted.setSpan(foreColour, startSpan, endSpan, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 				return highlighted;
 			}
-			else
-			{
+			else {
 				return preview;
 			}
 		}
@@ -3042,8 +3044,9 @@ public class ThreadViewFragment extends ListFragment
 			ArrayList<Integer> postIds = new ArrayList<Integer>();
 			for (int i = 0; i < posts.size(); i++)
 			{
-				if (!posts.get(i).isPQP())
+				if (!posts.get(i).isPQP()) {
 					postIds.add(posts.get(i).getPostId());
+				}
 			}
 
 			for (int i = 0; i < posts.size(); i++)
@@ -3228,7 +3231,6 @@ public class ThreadViewFragment extends ListFragment
 			if (index >= 0 && index < getListView().getCount())
 			{
 				ensureVisible(index, true, true, false);
-
 			}
 		}
 	}
@@ -3239,8 +3241,9 @@ public class ThreadViewFragment extends ListFragment
 
 		if (view != null) {
 
-			if (position < 0 || position >= view.getCount())
+			if (position < 0 || position >= view.getCount()) {
 				return;
+			}
 
 			int firstPositionVisible = view.getFirstVisiblePosition();
 			int lastPositionVisible = view.getLastVisiblePosition();
@@ -3257,6 +3260,7 @@ public class ThreadViewFragment extends ListFragment
 				System.out.println("STUFF:L " + (lastPositionVisible - firstPositionVisible) + " gvt:" + view.getChildCount());
 				view.setSelectionFromTop(lastPositionVisible + 1, view.getChildAt(lastPositionVisible - firstPositionVisible).getBottom() - 5);
 			}
+
 			if (withPostMove) {
 				// keep the child view on screen
 				final int pos = position;
@@ -3394,9 +3398,9 @@ public class ThreadViewFragment extends ListFragment
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			menu.findItem(R.id.menu_textSelectSearch).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			menu.findItem(R.id.menu_textSelectSearchGoogle).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			if (menu.findItem(android.R.id.selectAll) != null)
+			if (menu.findItem(android.R.id.selectAll) != null) {
 				menu.findItem(android.R.id.selectAll).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
+			}
 			return false;
 		}
 

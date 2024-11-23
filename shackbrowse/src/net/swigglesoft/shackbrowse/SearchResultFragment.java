@@ -525,10 +525,10 @@ public class SearchResultFragment extends ListFragment
 			}
             
             if (!TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted()))) {
-				holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
+				holder.posted.setText(TimeDisplay.getTimeAsMMDDYY_HMA_TZ(t.getPosted()));
 			}
         	else {
-				holder.posted.setText(TimeDisplay.convertTimeLong(t.getPosted()));
+				holder.posted.setText(TimeDisplay.getTimeAsMMDD_HMA_TZ(t.getPosted()));
 			}
                     
             return convertView;

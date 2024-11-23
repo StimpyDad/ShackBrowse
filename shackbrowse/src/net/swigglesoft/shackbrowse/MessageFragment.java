@@ -547,16 +547,17 @@ public class MessageFragment extends ListFragment
             
             final double threadAge = TimeDisplay.threadAgeInHours(m.getPosted());
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-        	if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(m.getPosted())))
-        		holder.posted.setText(TimeDisplay.convTime(m.getPosted(), "MMM dd, yyyy h:mma zzz"));
+        	if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(m.getPosted()))) {
+                holder.posted.setText(TimeDisplay.getTimeAsMMDDYY_HMA_TZ(m.getPosted()));
+            }
         	else
         	{
 	            if ((!_showHoursSince) || (threadAge > 24f))
 	            {
 	            	if (threadAge > 96f)
-	            		holder.posted.setText(TimeDisplay.convertTimeLong(m.getPosted()));
+	            		holder.posted.setText(TimeDisplay.getTimeAsMMDD_HMA_TZ(m.getPosted()));
 	            	else
-	            		holder.posted.setText(TimeDisplay.convertTime(m.getPosted()));
+	            		holder.posted.setText(TimeDisplay.getTimeAsDAY_HMA(m.getPosted()));
 	            }
 	            else
 	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAge));

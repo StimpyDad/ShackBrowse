@@ -24,12 +24,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
 
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.collection.LruCache;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
@@ -704,28 +702,34 @@ public class ThreadViewFragment extends ListFragment
 		}
 	}
 
-	public void shareURL(int pos)
+	public void shareURL(int pos, Post p)
 	{
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
 		sendIntent.putExtra(Intent.EXTRA_TEXT, createPostURL(pos));
+		if(p != null) {
+			String subj = "Chatty post by " + p.getUserName() + " on " + TimeDisplay.getTimeAsMMDDYY(p.getPosted());
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, subj);
+		}
 		sendIntent.setType("text/plain");
 		startActivity(Intent.createChooser(sendIntent, "Share Post Link"));
 	}
+
 	private String createPostURL(int pos)
 	{
 		if (_adapter.getItem(pos) != null && _adapter.getItem(pos).getPostId() > 0)
 		{
-			String str = "http://www.shacknews.com/chatty?id=" + _adapter.getItem(pos).getPostId();
+			String str = AppConstants.SHACKNEWS_CHATTY_URL + "?id=" + _adapter.getItem(pos).getPostId();
 			if ((_lastExpanded > 0) && (pos > 0))
 			{
-				str = "http://www.shacknews.com/chatty?id=" + _adapter.getItem(pos).getPostId();
+				str = AppConstants.SHACKNEWS_CHATTY_URL + "?id=" + _adapter.getItem(pos).getPostId();
 				str = str + "#item_" + _adapter.getItem(pos).getPostId();
 			}
 			return str;
 		}
 		return null;
 	}
+
 	public void copyURL(int pos)
 	{
 		if (createPostURL(pos) != null)
@@ -733,6 +737,7 @@ public class ThreadViewFragment extends ListFragment
 			copyString(createPostURL(pos));
 		}
 	}
+
 	public void copyPostText(int pos)
 	{
 		copyString(_adapter.getItem(pos).getCopyText());
@@ -1809,7 +1814,7 @@ public class ThreadViewFragment extends ListFragment
 										copyURL(pos);
 										break;
 									case 2:
-										shareURL(pos);
+										shareURL(pos, p);
 										break;
 								}
 								return true;
@@ -2416,6 +2421,7 @@ public class ThreadViewFragment extends ListFragment
 				type = ptype;
 			}
 		}
+
 		private ArrayList<PostClip> postTextChopper(final Spannable text, boolean removeLinksImages, boolean removeLinksVideos) {
 			// this thing chops up posts that have image links into sets up preceeding text and image link following it.
 			CustomURLSpan[] list = text.getSpans(0, text.length(), CustomURLSpan.class);

@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 public class User {
 
-    private final static HashSet<String> MODS = new HashSet<String>(Arrays.asList(new String[]{"axeman808", "daeadin", "dognose", "evildolemite", "hirez", "morgin", "quix", "redfive", "serpico74", "sikander", "vincent grayson"}));
+    private final static HashSet<String> MODS = new HashSet<String>(Arrays.asList(new String[]{"axeman808", "daeadin", "dognose", "evildolemite", "hirez", "quix", "serpico74", "vincent grayson"}));
     private final static HashSet<String> EMPLOYEES = new HashSet<String>(Arrays.asList(new String[]{"the man with the briefcase", "sporkyreeve", "daniel_perez", "joshua hawkins", "brittany vincent", "beardedaxe", "gburke59", "plonkus", "hammersuit", "staymighty", "shugamom"}));
 
     public static Boolean isEmployee(String userName) {
